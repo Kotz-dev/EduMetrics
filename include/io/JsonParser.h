@@ -8,7 +8,7 @@
 #include <QString>
 
 
-struct  INFO {
+struct ConfigFileData {
      std::string idioma;
      std::string config;
      std::string tema;
@@ -16,14 +16,14 @@ struct  INFO {
 };
 
 
-class json_parser {
+class JsonParser {
 public :
-     static nlohmann::json info_file(INFO obj);
-     static QString GetFileJson_Str(QString patch,QString key);
-     static nlohmann::json GetFileJson(QString Patch,QString key);
-     static bool WriteFileJson(QString Patch,std::string chave,std::string text);
+     static nlohmann::json buildConfigJson(ConfigFileData obj);
+     static QString readJsonKeyAsString(QString filePath, QString key);
+     static nlohmann::json readJsonKey(QString filePath, QString key);
+     static bool writeJsonKey(QString filePath, std::string key, std::string value);
      static void removeQuotes(QString & str);
-     json_parser();
+     JsonParser();
 };
 
 

@@ -11,10 +11,9 @@
 #include <fstream>
 #include <QDebug>
 #include <QDir>
-#include <qurl.h>
 #include "GlobalAccess.h"
 
-typedef std::vector<Oitem> item_vector_array;
+typedef std::vector<StudentRecord> item_vector_array;
 
 struct ApplicationConfig {
     QString language;
@@ -44,6 +43,7 @@ enum FileType {
 struct FileSystemInfo {
     std::filesystem::path file_;
     std::filesystem::path file_idioma;
+    // std::filesystem::path file_data;
     bool exist;
 };
 
@@ -65,19 +65,19 @@ struct  FileStatus {
      bool isOpen   = false;
      QString filePath = "";
 };
-class FileManger {
+class FileManager {
 private :
     QFile file;
     static bool fileIsOpen;
 private :
-    static FileSystemInfo info_file_system(FileType type);
+    static FileSystemInfo resolveFilePaths(FileType type);
 public :
-    static void initialize_file_manager();
-    static FileStatus is_open( QString filePath);
-    static bool is_null_fileJson(QString filePath);
+    static void initialize();
+    static FileStatus checkFileStatus(QString filePath);
+    static bool isJsonFileEmpty(QString filePath);
     static bool Load( QString filePath, Json &jsonOutput);
     static bool Load( QString filePath, nlohmann::json &jsonOutput, bool &isOpen);
     static bool save( QString filePath, std::variant<item_vector_array, ApplicationConfig> dataObject);
-    FileManger();
+    FileManager();
 };
 #endif //FILEMANGER_H

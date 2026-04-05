@@ -2,72 +2,64 @@
 // Created by KoTz on 30/06/2025.
 //
 
-#include "ui/UIManager.h"
+#include "managers/UIManager.h"
 
 #include "GlobalAccess.h"
 #include "JsonParser.h"
 
 Style_Table::Style::Style() {
-    // if (getOperatingSystem() == -1) {
-    //     window_light           =  QString::fromStdWString(std::filesystem::current_path()/"styles//window_branco.qss");
-    //     ui_styles_             =  QString::fromStdWString(std::filesystem::current_path().remove_filename().append("styles\\ui_styles.qss")));
-    //     ui_styles__            =  QString::fromStdWString(std::filesystem::current_path().remove_filename().append("styles\\ui_styles.qss"));
-    //     ui_styles_tabel_widget =  QString::fromStdWString(std::filesystem::current_path().remove_filename().append("styles\\styles_tabel_widget.qss"));
-    // }
-
 }
 
-void Style_Table::Style::table_result(QTableWidget *ui,int index,int ps) {
-     if (ui != nullptr) {
-         if (ps == 0) {
-             ///ui->item(index,7)->setBackground(QColor(Qt::black));
-             ui->item(index,7)->setText("Reprovado por falta");
-             ui->item(index,7)->setBackground(QColor(Qt::red));
+void Style_Table::Style::setRowResult(QTableWidget *table, int row, int status) {
+     if (table != nullptr) {
+         if (status == 0) {;
+             table->item(row,7)->setText("Reprovado por falta");
+             table->item(row,7)->setBackground(QColor(Qt::red));
          }
 
-         if (ps == 1) {
-             ui->item(index,7)->setText("Aprovado");
-             ui->item(index,7)->setBackground(QColor(Qt::darkGreen));
+         if (status == 1) {
+             table->item(row,7)->setText("Aprovado");
+             table->item(row,7)->setBackground(QColor(Qt::darkGreen));
 
          }
 
-         if (ps == 2) {
-             ui->item(index,7)->setText("Reprovado");
-             ui->item(index,7)->setBackground(QColor(Qt::red));
+         if (status == 2) {
+             table->item(row,7)->setText("Reprovado");
+             table->item(row,7)->setBackground(QColor(Qt::red));
          }
      }
 
     return;
 }
-void Style_Table::Style::clear_table(QTableWidget *ui,int h,int colune) {
-    ui->item(h,colune)->setText("");
-    ui->item(h, colune)->setBackground(QColor::fromRgb(44,44,44,44));
+void Style_Table::Style::clearCell(QTableWidget *table, int row, int column) {
+    table->item(row,column)->setText("");
+    table->item(row, column)->setBackground(QColor::fromRgb(44,44,44,44));
 }
 
-void ui_controller::WindowSystemTema(QString tema) {
-    if (tema == "Claro") {
-        Window_Light(GLOBAL::WINDOW::UI,nullptr);
+void ui_controller::applyTheme(QString themeName) {
+    if (themeName == "Claro") {
+        applyLightTheme(GLOBAL::WINDOW::UI,nullptr);
     }
-    if (tema == "Escuro") {
-        Window_Dark(GLOBAL::WINDOW::UI);
-    }
-}
-
-void ui_controller::WindowSystemTema() {
-    if ((json_parser::GetFileJson(GLOBAL::PATCH_FILE::CONFIG,"tema") == "Claro")) {
-       Window_Light(GLOBAL::WINDOW::UI,nullptr);
-    }
-    if ((json_parser::GetFileJson(GLOBAL::PATCH_FILE::CONFIG,"tema") == "Escuro")) {
-        Window_Dark(GLOBAL::WINDOW::UI);
+    if (themeName == "Escuro") {
+        applyDarkTheme(GLOBAL::WINDOW::UI);
     }
 }
 
-void ui_controller::Window_Light(Ui__windows_ *ui, Ui::option *op) {
-    QFile filew{window_light};
+void ui_controller::applyTheme() {
+    if ((JsonParser::readJsonKey(GLOBAL::FILE_PATHS::CONFIG,"tema") == "Claro")) {
+       applyLightTheme(GLOBAL::WINDOW::UI,nullptr);
+    }
+    if ((JsonParser::readJsonKey(GLOBAL::FILE_PATHS::CONFIG,"tema") == "Escuro")) {
+        applyDarkTheme(GLOBAL::WINDOW::UI);
+    }
+}
+
+void ui_controller::applyLightTheme(Ui_MainWindow *ui, Ui::PreferencesWindow *op) {
+    QFile filew{ui_styles_tabel_widget};
     if (ui != nullptr) {
         filew.open(QFile::ReadOnly);
         QString styleSheet = filew.readAll();
-        ui->tableWidget->setStyleSheet(styleSheet);
+        ui->tableWidget->setStyleSheet(styleSheet + "QTableWidget QLineEdit { border: 1px solid #aaaaaa; }");
         ui->menuBar->setStyleSheet("background-color: #ededed;color: #000000;");
         ui->frame->setStyleSheet("background-color: rgb(255, 255, 255);color: #000000;");
         ui->centralwidget->setStyleSheet("background-color: rgb(255, 255, 255);color: #000000;");
@@ -75,8 +67,8 @@ void ui_controller::Window_Light(Ui__windows_ *ui, Ui::option *op) {
 }
 
 
-void ui_controller::TableWidget(Ui__windows_ *ui) {
-    QFile filew{ui_styles_tabel_widget};
+void ui_controller::applyTableStyle(Ui_MainWindow *ui) {
+    QFile filew{QString::fromStdString(ui_styles_tabel_widget.string())};
     if (ui != nullptr) {
         filew.open(QFile::ReadOnly);
         QString styleSheet = filew.readAll();
@@ -84,24 +76,27 @@ void ui_controller::TableWidget(Ui__windows_ *ui) {
     }
 }
 
-void ui_controller::Window_Dark(Ui__windows_ *ui) {
+void ui_controller::applyDarkTheme(Ui_MainWindow *ui) {
     qDebug() << window_dark;
     QFile filew{window_dark};
     if (ui != nullptr) {
         filew.open(QFile::ReadOnly);
         QString styleSheet = filew.readAll();
-        ui->tableWidget->setStyleSheet("");
+       // ui->tableWidget->setStyleSheet("");
         ui->menuBar->setStyleSheet("");
         ui->frame->setStyleSheet("");
         ui->centralwidget->setStyleSheet("");
     }
 }
 
-void ui_controller::Button(TYPE TY,Ui__windows_ * ui) {
+void ui_controller::applyButtonStyles(TYPE TY,Ui_MainWindow * ui) {
     QFile filew{ui_styles_};
+
+
    if (TY == TYPE::MAIN_WINDOW) {
        if (filew.open(QFile::ReadOnly)) {
            QString styleSheet = filew.readAll();
+           ui->logo->setStyleSheet(styleSheet);
            ui->btn_add->setStyleSheet(styleSheet);
            ui->btn_remover->setStyleSheet(styleSheet);
            filew.close();
@@ -110,7 +105,7 @@ void ui_controller::Button(TYPE TY,Ui__windows_ * ui) {
        }
    }
 }
-void UI_FONT::text(QString fonte,Ui::option * ui,Ui__windows_ *win) {
+void UI_FONT::text(QString fonte,Ui::PreferencesWindow * ui,Ui_MainWindow *win) {
      if (ui == nullptr) {
          return;
      }
@@ -138,7 +133,7 @@ void UI_FONT::text(QString fonte,Ui::option * ui,Ui__windows_ *win) {
    win->label->setFont(QFont(fonte));
 }
 
-void UI_FONT::text(nlohmann::json json, Ui::option *ui) {
+void UI_FONT::text(nlohmann::json json, Ui::PreferencesWindow *ui) {
     if (ui != nullptr) {
         auto get = json["Fonte"];
         ui->label_tema->setFont(QString::fromStdString(get).remove("\\"));
@@ -153,7 +148,7 @@ void UI_FONT::text(nlohmann::json json, Ui::option *ui) {
         ui->label->setFont(QString::fromStdString(get).remove("\\"));
     }
 }
- void UI_FONT::text(nlohmann::json json,Ui__windows_ * ui) {
+ void UI_FONT::text(nlohmann::json json,Ui_MainWindow * ui) {
     if (ui != nullptr) {
         auto get = json["Fonte"];
         ui->menuArquivos->setFont(QFont(QString::fromStdString(get).remove("\\")));

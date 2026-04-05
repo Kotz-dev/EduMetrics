@@ -7,10 +7,6 @@
 
 #include <QFile>
 #include <fstream>
-#include <istream>
-#include  <QDebug>
-#include <ostream>
-#include <qurl.h>
 
 
 class FileVx {

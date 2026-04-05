@@ -7,9 +7,9 @@
 
 #include <QTableWidget>
 #include <fmt/format.h>
-#include "ui/UIManager.h"
+#include "managers/UIManager.h"
 #include "data/StudentRecord.h"
-#include <ui/LanguageManager.h>
+#include "managers/LanguageManager.h"
 
 
 enum TYPE_GRADE {
@@ -28,37 +28,35 @@ private :
     QString Nome;
     double N1;
     double N2;
-    int aula_prevista;
-    int aula_ministradas;
-    int numero_presenca;
-    double result_presenca{};
-    double media;
-    double nota_final;
+    int planned_classes;
+    int taught_classes;
+    int attendance_count;
+    double attendance_percentage{};
+    double average_grade;
+    double final_grade;
 
     double IA{};
-    bool is_arrenado;
-
-     int x = 0;
+    bool is_rounded;
 
 QTableWidget *table_widget_;
 public :
       void processGradeResult(int indexItem);
-      bool Is_verify_grade_format(int grade_values);
-      void Formula_Avaliacao(double n1, double  n2, double  &NF,double  AI);
-      void Formula_Avaliacao(double n1, double  n2, double  &NF);
-      void FaltouMedia(double  n1,double  n2,double  NF,int row);
-      QString is_arredonar(double n);
-      void Quantidade_faltas(int index,QTableWidget *ui);
+      bool isValidGradeFormat(int row);
+      void computeFinalGrade(double n1, double  n2, double  &finalGrade, double  IA);
+      void computeFinalGrade(double n1, double  n2, double  &finalGrade);
+      void checkNeededGrade(double  n1, double  n2, double  finalGrade, int row);
+      QString roundGrade(double n);
+      void calculateAttendance(int index, QTableWidget *table);
 
-      void FormulaParaMedia(bool N1_Menor,bool N2_Menor, bool iguais,int row);
+      void calculateNeededGrade(bool n1IsLower, bool n2IsLower, bool areEqual, int row);
 
-       void sets_todas_atividades(int aula_prevista,int aula_ministradas,int numero_presenca,double n1,double n2,double IA);
-       void sets_todas_atividades(double n1,double n2,double IA);
+       void setGradeData(int plannedClasses, int taughtClasses, int attendanceCount, double n1, double n2, double IA);
+       void setGradeData(double n1, double n2, double IA);
 
 
-       Oitem Get_All() const;
+       StudentRecord toRecord() const;
 
-       void clear_table_grade();
+       void reset();
 
 
       GradeSystem();

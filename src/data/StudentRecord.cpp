@@ -6,9 +6,9 @@
 
 
 
-Oitem::Oitem() {}
+StudentRecord::StudentRecord() {}
 
-Oitem::Oitem(QString nome ,int aula_prevista,int aula_ministradas,int numero_presenca, double N1,double N2) {
+StudentRecord::StudentRecord(QString nome ,int aula_prevista,int aula_ministradas,int numero_presenca, double N1,double N2) {
     this->name = nome;
     this->planned_classes = aula_prevista;
     this->taught_classes = aula_ministradas;

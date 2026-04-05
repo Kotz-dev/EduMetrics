@@ -4,18 +4,17 @@
 
 #include "core/GradeSystem.h"
 
-void GradeSystem::FormulaParaMedia(bool N1_menor, bool n2_menor, bool iguais,int row) {
+void GradeSystem::calculateNeededGrade(bool n1IsLower, bool n2IsLower, bool areEqual, int row) {
 
     auto  N1 = this->N1;
     auto  N2 = this->N2;
-    auto  NF = this->nota_final;
+    auto  NF = this->final_grade;
 
     QString is = "";
     const auto items = this->table_widget_->item(row,TYPE_GRADE::FALTA_MEDIA);
-    std::string teste;
-    if (N1_menor == true) {
+    if (n1IsLower == true) {
          for (double i = 0; i <= 10; i+=00.1) {
-             Formula_Avaliacao(i, N2, NF);
+             computeFinalGrade(i, N2, NF);
              if (NF >= 6.0) {
                  items->setText(QString::fromStdString(fmt::format("N1 : {:-.1f} -> {:-.1f}",N1,i)));
                  return;
@@ -25,10 +24,9 @@ void GradeSystem::FormulaParaMedia(bool N1_menor, bool n2_menor, bool iguais,int
              }
          }
      }
-     if (n2_menor == true) {
-             QString str_n2 = "";
+     if (n2IsLower == true) {
              for (double i = 0; i <= 10; i+=00.1) {
-                 Formula_Avaliacao(N1, i, NF);
+                 computeFinalGrade(N1, i, NF);
                  if (NF >= 6) {
                      items->setText(QString::fromStdString(fmt::format("N2: {:-.1f} -> {:-.1f}",N2,i)));
                      return;
@@ -38,30 +36,29 @@ void GradeSystem::FormulaParaMedia(bool N1_menor, bool n2_menor, bool iguais,int
                  }
              }
      }
-    if (iguais == true) {
+    if (areEqual == true) {
         for (double i =  N2; i <= 10; i+=00.1) {
-            Formula_Avaliacao(i,i, NF);
+            computeFinalGrade(i,i, NF);
             if (NF >= 6) {
                 auto str = fmt::format("N1 ou N2 : {:-.1f} -> {:-.1f}",this->N1,i);
                 items->setText(QString::fromStdString(str));
                 return;
             }
         }
-           std::array<int,20> teste = {};
     }
 }
 
-void  GradeSystem::sets_todas_atividades(double n1,double n2,double IA) {
+void  GradeSystem::setGradeData(double n1,double n2,double IA) {
     this->N1 = n1;
     this->N2 = n2;
 
     this->IA = IA;
 }
 
-void GradeSystem::sets_todas_atividades(int aula_prevista, int aula_ministradas, int numero_presenca,double n1,double n2,double IA) {
-    this->aula_ministradas = aula_ministradas;
-    this->aula_prevista    = aula_prevista;
-    this->numero_presenca  = numero_presenca;
+void GradeSystem::setGradeData(int plannedClasses, int taughtClasses, int attendanceCount, double n1, double n2, double IA) {
+    this->taught_classes   = taughtClasses;
+    this->planned_classes  = plannedClasses;
+    this->attendance_count = attendanceCount;
 
     this->N1 = n1;
     this->N2 = n2;
@@ -69,28 +66,28 @@ void GradeSystem::sets_todas_atividades(int aula_prevista, int aula_ministradas,
     this->IA = IA;
 }
 
-void  GradeSystem::Quantidade_faltas(int index,QTableWidget *ui) {
-    if (ui == nullptr) {
+void  GradeSystem::calculateAttendance(int index, QTableWidget *table) {
+    if (table == nullptr) {
         return;
     }
-     if (ui->item(index, TYPE_GRADE::AULA_MINISTRADA)->text().isEmpty() == true ||
-         ui->item(index, TYPE_GRADE::NUMERO_PRESENCA)->text().isEmpty() == true) {
+     if (table->item(index, TYPE_GRADE::AULA_MINISTRADA)->text().isEmpty() == true ||
+         table->item(index, TYPE_GRADE::NUMERO_PRESENCA)->text().isEmpty() == true) {
          return;
      }
-     this->result_presenca = 0.0f;
-     this->result_presenca = (double)this->numero_presenca/(double)this->aula_ministradas*100;
+     this->attendance_percentage = 0.0f;
+     this->attendance_percentage = (double)this->attendance_count/(double)this->taught_classes*100;
 }
 
-void GradeSystem::FaltouMedia(double n1, double n2, double NFs, int row) {
+void GradeSystem::checkNeededGrade(double n1, double n2, double finalGradeVal, int row) {
     bool n1_menor = false, n2_menor = false;
 
     // Se a nota final for maior ou igual a 6, limpa o texto e retorna
 
-    if (NFs >= 6.0  || NFs >= 6.00 || NFs>= 6.0-1e-9) {
+    if (finalGradeVal >= 6.0  || finalGradeVal >= 6.00 || finalGradeVal >= 6.0-1e-9) {
         table_widget_->item(row, TYPE_GRADE::FALTA_MEDIA)->setText("");  // limopar
         return;
     }
-    if (is_arrenado) {
+    if (is_rounded) {
         return;
     }
     auto item = this->table_widget_->item(row, 8);
@@ -110,7 +107,7 @@ void GradeSystem::FaltouMedia(double n1, double n2, double NFs, int row) {
         n1_menor = true;
     }
 
-    this->FormulaParaMedia(n1_menor,n2_menor,n1 == n2,row);
+    this->calculateNeededGrade(n1_menor,n2_menor,n1 == n2,row);
 }
 /**
  * Calcula a nota final usando a fórmula: NF = 0.4*n1 + 0.6*n2
@@ -120,25 +117,25 @@ void GradeSystem::FaltouMedia(double n1, double n2, double NFs, int row) {
  * @param NF Nota Final (retornado por referência)
  * @param AI Avaliação Individual (opcional)
  */
-void GradeSystem::Formula_Avaliacao(double n1, double n2 , double  &NF, double  AI) {
+void GradeSystem::computeFinalGrade(double n1, double n2, double &finalGrade, double AI) {
     if (n1 > 10.0 || n2 > 10.0) {
         return;
     }
     if (AI != 0.0f) {
         n2 = n2 + AI;
     }
-    NF = 0.4 * n1 + 0.6 * n2;
-    if (NF == 0.0f) {
+    finalGrade = 0.4 * n1 + 0.6 * n2;
+    if (finalGrade == 0.0f) {
         return;
     }
-    this->nota_final = NF;
+    this->final_grade = finalGrade;
 }
 
-Oitem GradeSystem::Get_All() const {
-     return Oitem(this->Nome,
-         this->aula_prevista,
-         this->aula_ministradas,
-         this->numero_presenca,
+StudentRecord GradeSystem::toRecord() const {
+     return StudentRecord(this->Nome,
+         this->planned_classes,
+         this->taught_classes,
+         this->attendance_count,
          this->N1,this->N2);
 }
 /**
@@ -148,17 +145,17 @@ Oitem GradeSystem::Get_All() const {
  * @param n2 Nota 2
  * @param NF Nota Final (retornado por referência)
  */
-void GradeSystem::Formula_Avaliacao(double  n1, double  n2, double  &NF) {
+void GradeSystem::computeFinalGrade(double n1, double n2, double &finalGrade) {
     if (n1 >= 10.0 || n2 >= 10.0) {
         return;
     }
-    NF = 0.4 * n1 + 0.6 * n2;
-    if (NF == 0.0f) {
+    finalGrade = 0.4 * n1 + 0.6 * n2;
+    if (finalGrade == 0.0f) {
         return;
     }
-    const auto get = fmt::format("{:-.2f}",NF);
-    NF = QString::fromStdString(get).toDouble();
-    this->nota_final = NF;
+    const auto get = fmt::format("{:-.2f}",finalGrade);
+    finalGrade = QString::fromStdString(get).toDouble();
+    this->final_grade = finalGrade;
 }
 
 /**
@@ -168,21 +165,21 @@ void GradeSystem::Formula_Avaliacao(double  n1, double  n2, double  &NF) {
  * - Médias e resultados são zerados
  * - Nota de IA (Avaliação Individual) é zerada
  */
-void GradeSystem::clear_table_grade() {
+void GradeSystem::reset() {
     N1 = 0.0f;
     N2 = 0.0f;
-    aula_prevista = 0;
-    aula_ministradas = 0;
-    numero_presenca = 0;
-    result_presenca = 0.0f;
-    media = 0.0f;
-    nota_final = 0.0f;
+    planned_classes = 0;
+    taught_classes = 0;
+    attendance_count = 0;
+    attendance_percentage = 0.0f;
+    average_grade = 0.0f;
+    final_grade = 0.0f;
     IA = 0.0f;
-    is_arrenado = false;
+    is_rounded = false;
 }
-QString GradeSystem::is_arredonar(double n) {
+QString GradeSystem::roundGrade(double n) {
     if (n >= 5.8 - 1e-9 && n <= 5.99 - 1e-9) {
-        is_arrenado = true;
+        is_rounded = true;
         return QString::fromStdString(fmt::format("{:.1f} -> {:.2f}",n,6.00));
     }
     return QString::fromStdString(fmt::format("{:.2f}",n));
@@ -201,28 +198,28 @@ void GradeSystem::processGradeResult(int indexItem) {
         return;
     }
     double NF = 0.0f;
-    Formula_Avaliacao(this->N1, this->N2, NF, this->IA);
+    computeFinalGrade(this->N1, this->N2, NF, this->IA);
 
-    Style_Table::Style::clear_table(table_widget_, indexItem, TYPE_GRADE::Resultado);
-    this->table_widget_->item(indexItem, TYPE_GRADE::Media)->setText(is_arredonar(NF));
-    Quantidade_faltas(indexItem, this->table_widget_);
-    FaltouMedia(this->N1, this->N2, NF, indexItem);
+    Style_Table::Style::clearCell(table_widget_, indexItem, TYPE_GRADE::Resultado);
+    this->table_widget_->item(indexItem, TYPE_GRADE::Media)->setText(roundGrade(NF));
+    calculateAttendance(indexItem, this->table_widget_);
+    checkNeededGrade(this->N1, this->N2, NF, indexItem);
 
     if (NF == 0.0f ) {
-        Style_Table::Style::clear_table(table_widget_, indexItem, TYPE_GRADE::Resultado);
+        Style_Table::Style::clearCell(table_widget_, indexItem, TYPE_GRADE::Resultado);
         return;
     }
-    if (is_arrenado == true) {
-        Style_Table::Style::table_result(table_widget_, indexItem, 1);
+    if (is_rounded == true) {
+        Style_Table::Style::setRowResult(table_widget_, indexItem, 1);
     }
-    if (NF >= 6.0 || NF >= 6 || NF >= 6.0 - 1e-9 || is_arrenado == true) {
-        Style_Table::Style::table_result(table_widget_, indexItem, 1);
+    if (NF >= 6.0 || NF >= 6 || NF >= 6.0 - 1e-9 || is_rounded == true) {
+        Style_Table::Style::setRowResult(table_widget_, indexItem, 1);
     }else if (NF < 6.0-1e-9 && NF > 0.0- 1e-9) {
-        Style_Table::Style::table_result(table_widget_, indexItem, 2);
+        Style_Table::Style::setRowResult(table_widget_, indexItem, 2);
     }
-    if (result_presenca != 0.0 || result_presenca != 0.0f) {
-        if (this->result_presenca <= 75.0 - 1e-9 && this->result_presenca >= 0.0- 1e-9) {
-            Style_Table::Style::table_result(table_widget_, indexItem, 0);
+    if (attendance_percentage != 0.0 || attendance_percentage != 0.0f) {
+        if (this->attendance_percentage <= 75.0 - 1e-9 && this->attendance_percentage >= 0.0- 1e-9) {
+            Style_Table::Style::setRowResult(table_widget_, indexItem, 0);
         }
     }
 }
@@ -259,11 +256,11 @@ bool startsWithDot(QString input_str) {
 }
 
 
-bool GradeSystem::Is_verify_grade_format(int grade_values){
+bool GradeSystem::isValidGradeFormat(int row){
         int dotCountN1 = 0; int dotCountN2 = 0;
 
-        auto firstInput_n1 = this->table_widget_->item(grade_values, TYPE_GRADE::N1);
-        auto firstInput_n2 = this->table_widget_->item(grade_values, TYPE_GRADE::N2);
+        auto firstInput_n1 = this->table_widget_->item(row, TYPE_GRADE::N1);
+        auto firstInput_n2 = this->table_widget_->item(row, TYPE_GRADE::N2);
 
         if (firstInput_n1 == nullptr || firstInput_n2 == nullptr) {
             return false;
@@ -304,21 +301,21 @@ bool GradeSystem::Is_verify_grade_format(int grade_values){
 }
 GradeSystem::GradeSystem():
                  N1(0.0f),
-                 N2(0.0f),aula_prevista(0),
-                 aula_ministradas(0),
-                 numero_presenca(0),
-                 media(0.0f),
-                 nota_final(0.0f),
-                 is_arrenado(false),table_widget_(nullptr) {}
+                 N2(0.0f),planned_classes(0),
+                 taught_classes(0),
+                 attendance_count(0),
+                 average_grade(0.0f),
+                 final_grade(0.0f),
+                 is_rounded(false),table_widget_(nullptr) {}
 
 GradeSystem::GradeSystem(QTableWidget *obj):
                 N1(0.0f),N2(0.0f),
-                aula_prevista(0),
-                aula_ministradas(0),
-                numero_presenca(0),
-                media(0.0f),
-                nota_final(0.0f),
-                is_arrenado(false),table_widget_(nullptr){
+                planned_classes(0),
+                taught_classes(0),
+                attendance_count(0),
+                average_grade(0.0f),
+                final_grade(0.0f),
+                is_rounded(false),table_widget_(nullptr){
      if (obj != nullptr) {
         this->table_widget_ = obj;
      }

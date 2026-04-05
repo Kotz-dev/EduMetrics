@@ -5,19 +5,19 @@
 // You may need to build the project (run Qt uic code generator) to get "ui__windows_.h" resolved
 
 
-#include "ui/MainWindow.h"
+#include "windows/MainWindow.h"
 #include <QDebug>
-#include "../io/FileConverter.h"
-#include "AvaliacaoDaPuc_autogen/include/ui_MainWindow.h"
+#include "io/FileConverter.h"
+#include "ui_MainWindow.h"
 #include "io/FileManager.h"
 
-static bool max_ilimite_value(double n1,double n2) {
+static bool isGradeOutOfRange(double n1,double n2) {
     if (n1 > 10.0 || n2 > 10.0) {
         return true;
     }
     return false;
 }
-void _windows_::Update_table_data() {
+void MainWindow::Update_table_data() {
     if (ui->tableWidget->rowCount() == 0 && ui->tableWidget->columnCount() == 0) {
         return;
     }
@@ -29,20 +29,20 @@ void _windows_::Update_table_data() {
             auto Taught_Classes = ui->tableWidget->item(index_item, 2)->text().toInt();
             auto Attendance_Count = ui->tableWidget->item(index_item, 3)->text().toInt();
             if (this->system_notas != nullptr) {
-                this->system_notas->sets_todas_atividades(0,Taught_Classes,Attendance_Count,N1,N2,IA);
+                this->system_notas->setGradeData(0,Taught_Classes,Attendance_Count,N1,N2,IA);
 
-                if (system_notas->Is_verify_grade_format(index_item))
+                if (system_notas->isValidGradeFormat(index_item))
                 {
-                    if (max_ilimite_value(N1,N2)) {
+                    if (isGradeOutOfRange(N1,N2)) {
                         return;
                     }
                     this->system_notas->processGradeResult(index_item);
                 }else {
-                    Style_Table::Style::clear_table(ui->tableWidget,index_item,TYPE_GRADE::Resultado);
-                    Style_Table::Style::clear_table(ui->tableWidget,index_item,TYPE_GRADE::Media);
-                    Style_Table::Style::clear_table(ui->tableWidget,index_item,TYPE_GRADE::FALTA_MEDIA);
+                    Style_Table::Style::clearCell(ui->tableWidget,index_item,TYPE_GRADE::Resultado);
+                    Style_Table::Style::clearCell(ui->tableWidget,index_item,TYPE_GRADE::Media);
+                    Style_Table::Style::clearCell(ui->tableWidget,index_item,TYPE_GRADE::FALTA_MEDIA);
                 }
-                this->system_notas->clear_table_grade();
+                this->system_notas->reset();
             }
         }
     }
@@ -58,20 +58,23 @@ void _windows_::Update_table_data() {
  * - Inicializa o gerenciador de arquivos
  * - Inicializa as variáveis globais
  */
-void _windows_::initialize() {
+void MainWindow::initialize() {
     std::unique_ptr<ui_controller> controller_ui = std::make_unique<ui_controller>();
-    ui_controller::Button(TYPE::MAIN_WINDOW,ui);
-    //ui_controller::TableWidget(ui);
-    FileManger::initialize_file_manager();
+    ui_controller::applyButtonStyles(TYPE::MAIN_WINDOW,ui);
+    ui_controller::applyTableStyle(ui);
+    FileManager::initialize();
     GLOBAL::init_global(ui);
-    ui_controller::WindowSystemTema();
+    ui_controller::applyTheme();
 }
 /**
 * Função que atualiza as notas na tabela
 * Chamada periodicamente pelo timer para manter 
 * a interface atualizada
 */
-void _windows_::Update() {
+void MainWindow::Update() {
+    if (ui != nullptr) {
+        ui_controller::applyTableStyle(ui);
+    }
     Update_table_data();
 }
 /**
@@ -80,12 +83,12 @@ void _windows_::Update() {
  * para atualização automática das notas
  * @param parent Widget pai (opcional)
  */
-_windows_::_windows_(QWidget *parent) : QMainWindow(parent), ui(new Ui::_windows_) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
     initialize();
-    FileManger::Load(GLOBAL::PATCH_FILE::CONFIG,GLOBAL::json);
+    FileManager::Load(GLOBAL::FILE_PATHS::CONFIG,GLOBAL::json);
     if (GLOBAL::json.empty() == false) {
-        LanguageUI::initialize_language_ui(GLOBAL::json,this->ui,GLOBAL::idioma);
+        LanguageUI::initialize(GLOBAL::json,this->ui,GLOBAL::idioma);
         UI_FONT::text(GLOBAL::json,ui);
     }
 
@@ -114,7 +117,7 @@ _windows_::_windows_(QWidget *parent) : QMainWindow(parent), ui(new Ui::_windows
  * @note A função atualiza um label na interface indicando sucesso ou falha do salvamento
  * @note Se a tabela estiver vazia, a função retorna sem fazer nada
  */
-void _windows_::saveTableData(QString filePath_,SaveMode saveMode) {
+void MainWindow::saveTableData(QString filePath_,SaveMode saveMode) {
     bool is_file_save = false;
 
     if (ui->tableWidget->rowCount() == 0) {
@@ -127,7 +130,7 @@ void _windows_::saveTableData(QString filePath_,SaveMode saveMode) {
         auto numero_presenca = ui->tableWidget->item(index_item, 3)->text().toInt();
         auto N1 = ui->tableWidget->item(index_item, 4)->text().toDouble();
         auto N2 = ui->tableWidget->item(index_item, 5)->text().toDouble();
-        item_list_.push_back(Oitem(nome,aula_prevista,aula_ministradas,numero_presenca,N1,N2));
+        item_list_.push_back(StudentRecord(nome,aula_prevista,aula_ministradas,numero_presenca,N1,N2));
     }
     ui->label_3->clear();
     if (info_file.filePath.isEmpty() == false && is_file_open == true) {
@@ -135,13 +138,13 @@ void _windows_::saveTableData(QString filePath_,SaveMode saveMode) {
         if (outputFile.exists() == true) {
             outputFile.remove();
         }
-        is_file_save = FileManger::save(info_file.filePath,item_list_);
+        is_file_save = FileManager::save(info_file.filePath,item_list_);
     }
     if (saveMode == SaveMode::SAVE_AS) {
-        is_file_save = FileManger::save(filePath_,item_list_);
+        is_file_save = FileManager::save(filePath_,item_list_);
     }
     if (saveMode == SaveMode::SAVE_LOCAL_FILE) {
-        is_file_save = FileManger::save(GLOBAL::PATCH_FILE::DATA,item_list_) ;
+        is_file_save = FileManager::save(GLOBAL::FILE_PATHS::DATA,item_list_) ;
     }
     if (is_file_save) {
         ui->label_3->setText("Salvo !");
@@ -151,12 +154,12 @@ void _windows_::saveTableData(QString filePath_,SaveMode saveMode) {
     }
     item_list_.clear();
 }
-void _windows_::on_actionOpition_triggered() {
-        op = new option(this);
+void MainWindow::on_actionOpition_triggered() {
+        op = new PreferencesWindow(this);
         op->setWindowFlags(Qt::Window | Qt::WindowCloseButtonHint);
         op->show();
 }
-void _windows_::on_actionSalvar_como_triggered() {
+void MainWindow::on_actionSalvar_como_triggered() {
     std::unique_ptr<QFileDialog> fileDialog = std::make_unique<QFileDialog>(this);
     auto selectedFile = fileDialog->getSaveFileName(this,"Salvar o arquivo","","");
 
@@ -188,7 +191,7 @@ QString removeDoubleQuotes(QString str) {
  * Salva os dados da tabela em um arquivo texto formatado
  * com id, nome e notas de cada aluno
  */
-void _windows_::on_actionSalvar_triggered() {
+void MainWindow::on_actionSalvar_triggered() {
     if (is_file_open == true) {
         saveTableData(info_file.filePath,SAVE_AS);
         return;
@@ -200,7 +203,7 @@ void _windows_::on_actionSalvar_triggered() {
  * Abre uma janela de diálogo para selecionar um arquivo .txt
  * e carrega o seu conteúdo na tabela, populando nome e notas
  */
-void _windows_::on_actionAbrir_triggered() {
+void MainWindow::on_actionAbrir_triggered() {
     bool is_file_aluno = false;
     std::unique_ptr<QFileDialog> newDialog = std::make_unique<QFileDialog>(this);
     auto openFileUrl = newDialog->getOpenFileUrl(this, "Abrir VX", QUrl(), "Arquivos VX (*.vx)");
@@ -213,7 +216,7 @@ void _windows_::on_actionAbrir_triggered() {
     }
     bool isLoadSuccessful = false;
     if (openFileUrl.isValid() == true) {
-        isLoadSuccessful = FileManger::Load(openFileUrl.toLocalFile(),get_json,is_file_open);
+        isLoadSuccessful = FileManager::Load(openFileUrl.toLocalFile(),get_json,is_file_open);
     }
      if (isLoadSuccessful == false) {
         return;
@@ -262,19 +265,18 @@ void _windows_::on_actionAbrir_triggered() {
         qDebug() << e.what();
     }
         if (is_file_aluno == true) {
-             QString info = "Arquivo aberto: "+ openFileUrl.fileName();
              ui->info_arquivo->setText("Arquivo aberto: "+ openFileUrl.fileName());
              info_file.filePath = openFileUrl.toLocalFile();
              info_file.isOpen = is_file_open;
         }
 
 }
-void _windows_::on_actionNovo_triggered() {
-    _windows_ *janela = new _windows_(this);
-    janela->show();
+void MainWindow::on_actionNovo_triggered() {
+    MainWindow *newWindow = new MainWindow(this);
+    newWindow->show();
 }
 
-_windows_::~_windows_() {
+MainWindow::~MainWindow() {
     delete is;
     delete ui;
 }
@@ -284,13 +286,16 @@ _windows_::~_windows_() {
  * Adiciona uma nova linha na tabela e inicializa suas células
  * com QTableWidgetItems vazios
  */
-void _windows_::on_btn_add_clicked() {
+void MainWindow::on_btn_add_clicked() {
 
     if (ui->tableWidget->rowCount() >= 12) {
         return;
     }
 
     ui->tableWidget->insertRow(0);
+
+    if (ui->tableWidget->rowCount() )
+
     for (int b = 0; b < ui->tableWidget->rowCount();b++) {
         for (int a = 0; a < ui->tableWidget->columnCount();a++) {
              if (ui->tableWidget->item(b,a) == nullptr) {
@@ -308,12 +313,25 @@ void _windows_::on_btn_add_clicked() {
     ui->tableWidget->item(0,7)->setFlags(Qt::ItemIsEnabled);
     ui->tableWidget->item(0,8)->setFlags(Qt::ItemIsEnabled);
 }
+
 /**
  * Função chamada quando o botão "Remover" é clicado
  * Remove a última linha da tabela
  */
-void _windows_::on_btn_remover_clicked()
+void MainWindow::on_btn_remover_clicked()
 {
+    int coluna = 0;
+   for (int a = 0; a < ui->tableWidget->rowCount();a++) {
+       while (coluna < ui->tableWidget->columnCount()) {
+           if (ui->tableWidget->item(a,coluna) != nullptr ) {
+               if (ui->tableWidget->item(a,coluna)->text() == "") {
+                   ui->tableWidget->removeRow(a);
+                   a--;
+               }
+           }
+           coluna++;
+       }
+   }
      std::set<int> listitem;
      for (auto & i : ui->tableWidget->selectedItems()) {
          listitem.insert(i->row());

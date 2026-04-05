@@ -11,16 +11,12 @@
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
-    class option;
+    class PreferencesWindow;
 }
 
 QT_END_NAMESPACE
 
- struct info_save_automatico {
-     int intervalo = 0;
-     int ligado    = 0;
-};
-class option : public QMainWindow , public info_save_automatico {
+class PreferencesWindow : public QMainWindow {
     Q_OBJECT
 
 private slots:
@@ -32,16 +28,14 @@ private slots:
     void on_fontComboBox_currentIndexChanged(int index);
     void set_setting (QString Theme,QString idioma,QString Fonte);
 public:
-    explicit option(QWidget *parent = nullptr);
+    explicit PreferencesWindow(QWidget *parent = nullptr);
 
-    ~option() override;
+    ~PreferencesWindow() override;
 
 private:
-    Ui::option *ui_option_;
-     bool is_seleciton_theme;
-     bool is_seleciton_idioma;
-     bool is_seleciton_fonte;
-    QString file_antigo;
+    Ui::PreferencesWindow *ui_preferences_window_;
+     bool has_selected_theme;
+     bool has_selected_idiom;
 };
 
 

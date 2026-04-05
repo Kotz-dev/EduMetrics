@@ -7,7 +7,7 @@
 
 #include <QString>
 
-struct Oitem {
+struct StudentRecord {
     uint id;
     QString name;
     int planned_classes;
@@ -17,12 +17,12 @@ struct Oitem {
     double N2;
     double IA;
 
-    bool operator < (const Oitem &other) const {
+    bool operator < (const StudentRecord &other) const {
         return id < other.id;
     }
 
-     Oitem ();
-     Oitem(QString nome ,int aula_prevista,int aula_ministradas,int numero_presenca, double N1,double N2);
+     StudentRecord ();
+     StudentRecord(QString nome ,int aula_prevista,int aula_ministradas,int numero_presenca, double N1,double N2);
 };
 
 

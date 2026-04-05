@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.31)
-project(AvaliacaoDaPuc)
+project(PucSimulator)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
@@ -23,10 +23,10 @@ endif()
 # -------------------------
 # Bibliotecas externas
 # -------------------------
-#find_path(RAPIDCSV_INCLUDE_DIRS "rapidcsv.h")
 find_package(fmt CONFIG REQUIRED)
 find_package(Qt6 COMPONENTS Core Gui Widgets REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
+
 # -------------------------
 # Includes
 # -------------------------
@@ -35,31 +35,28 @@ include_directories(
         ${CMAKE_SOURCE_DIR}/include/core
         ${CMAKE_SOURCE_DIR}/include/data
         ${CMAKE_SOURCE_DIR}/include/io
-        ${CMAKE_SOURCE_DIR}/include/ui
+        ${CMAKE_SOURCE_DIR}/include/managers
         ${CMAKE_SOURCE_DIR}/include/utils
+        ${CMAKE_SOURCE_DIR}/include/windows
         ${CMAKE_CURRENT_BINARY_DIR}
-       # ${RAPIDCSV_INCLUDE_DIRS}
 )
 
 # Definição do caminho das UI (Qt)
 set(CMAKE_AUTOUIC_SEARCH_PATHS
-        ${CMAKE_SOURCE_DIR}
-        ${CMAKE_SOURCE_DIR}/src
-        ${CMAKE_SOURCE_DIR}/ui
+        ${CMAKE_SOURCE_DIR}/forms
 )
 
 # -------------------------
 # Executável
 # -------------------------
-add_executable(AvaliacaoDaPuc
+add_executable(PucSimulator
         # UI/QRC
-        ${CMAKE_SOURCE_DIR}/ui/MainWindow.ui
-        ${CMAKE_SOURCE_DIR}/ui/InfoWindow.ui
-        ${CMAKE_SOURCE_DIR}/ui/option.ui
-        ${CMAKE_SOURCE_DIR}/resources.qrc
+        ${CMAKE_SOURCE_DIR}/forms/MainWindow.ui
+        ${CMAKE_SOURCE_DIR}/forms/option.ui
+        ${CMAKE_SOURCE_DIR}/resources/resources.qrc
 
-        # entry point
-        src/ui/main.cpp
+        # Entry point
+        src/main.cpp
 
         # Core
         src/core/GradeSystem.cpp
@@ -72,32 +69,32 @@ add_executable(AvaliacaoDaPuc
         # IO
         src/io/FileManager.cpp
         include/io/FileManager.h
+        src/io/JsonParser.cpp
+        include/io/JsonParser.h
+        src/io/FileConverter.cpp
+        include/io/FileConverter.h
 
-        # UI
-        src/ui/MainWindow.cpp
-        include/ui/MainWindow.h
-        src/ui/UIManager.cpp
-        include/ui/UIManager.h
-        src/ui/LanguageManager.cpp
-        include/ui/LanguageManager.h
-        src/ui/PreferencesWindow.cpp
-        include/ui/PreferencesWindow.h
+        # Managers
+        src/managers/UIManager.cpp
+        include/managers/UIManager.h
+        src/managers/LanguageManager.cpp
+        include/managers/LanguageManager.h
+
+        # Windows
+        src/windows/MainWindow.cpp
+        include/windows/MainWindow.h
+        src/windows/PreferencesWindow.cpp
+        include/windows/PreferencesWindow.h
 
         # Utils
         src/utils/GlobalAccess.cpp
         include/utils/GlobalAccess.h
-        src/io/JsonParser.cpp
-        include/io/JsonParser.h
-        src/data/ErrorLog.cpp
-        include/data/ErrorLog.h
-        src/io/FileConverter.cpp
-        src/io/FileConverter.h
 )
 
 # -------------------------
 # Linkagem
 # -------------------------
-target_link_libraries(AvaliacaoDaPuc PRIVATE
+target_link_libraries(PucSimulator PRIVATE
         Qt::Core
         Qt::Gui
         Qt::Widgets

@@ -10,7 +10,7 @@
 #include <fstream>
 
 
-void json_parser::removeQuotes(QString  & str) {
+void JsonParser::removeQuotes(QString  & str) {
     if (str.isEmpty()) {
         return;
     }
@@ -19,16 +19,15 @@ void json_parser::removeQuotes(QString  & str) {
     }
 }
 
-
-bool json_parser::WriteFileJson(QString pathc,std::string chave,std::string text) {
+bool JsonParser::writeJsonKey(QString pathc,std::string key,std::string value) {
     if (pathc.isEmpty() == false) {
         QFile filew{pathc};
         filew.open(QFile::ReadOnly | QFile::Text | QFile::WriteOnly);
         nlohmann::json json = nlohmann::json::parse(filew.readAll().toStdString());
-        json[chave] = text;
-        std::ofstream teste(pathc.toStdString());
-        teste << std::setw(2) << json << std::endl;
-        teste.close();
+        json[key] = value;
+        std::ofstream outFile(pathc.toStdString());
+        outFile << std::setw(2) << json << std::endl;
+        outFile.close();
         filew.close();
         return true;
     }
@@ -36,7 +35,7 @@ bool json_parser::WriteFileJson(QString pathc,std::string chave,std::string text
 }
 
 
-nlohmann::json json_parser::info_file(INFO obj) {
+nlohmann::json JsonParser::buildConfigJson(ConfigFileData obj) {
     nlohmann::json json = {
         {"idioma" ,      obj.idioma},
         {"config",       obj.config},
@@ -47,7 +46,7 @@ nlohmann::json json_parser::info_file(INFO obj) {
 }
 
 
-QString json_parser::GetFileJson_Str(QString patch, QString key) {
+QString JsonParser::readJsonKeyAsString(QString patch, QString key) {
     nlohmann::json json;
     QString get;
     QFile filew{patch};
@@ -61,7 +60,7 @@ QString json_parser::GetFileJson_Str(QString patch, QString key) {
     get = QString::fromStdString(json[key.toStdString()]).remove("'").remove("\\");
     return get;
 }
-nlohmann::json json_parser::GetFileJson(QString Patch, QString key) {
+nlohmann::json JsonParser::readJsonKey(QString Patch, QString key) {
     nlohmann::json json;
     QFile filew{Patch};
     filew.open(QFile::ReadOnly | QFile::Text);
@@ -73,6 +72,6 @@ nlohmann::json json_parser::GetFileJson(QString Patch, QString key) {
     }
     return json[key.toStdString()];
 }
-json_parser::json_parser() {
+JsonParser::JsonParser() {
 
 }

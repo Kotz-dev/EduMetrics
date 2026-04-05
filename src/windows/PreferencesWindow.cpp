@@ -1,0 +1,146 @@
+//
+// Created by kotz on 19/09/2025.
+//
+
+// You may need to build the project (run Qt uic code generator) to get "ui_option.h" resolved
+
+#include "windows/PreferencesWindow.h"
+#include <QFileDialog>
+#include <fmt/base.h>
+#include "JsonParser.h"
+#include "ui_option.h"
+#include "io/FileManager.h"
+#include "utils/GlobalAccess.h"
+#include "qwidget.h"
+#include "UIManager.h"
+#include <fmt/std.h>
+
+
+void PreferencesWindow::on_fontComboBox_currentIndexChanged(int index) {
+
+}
+
+//idioma
+void PreferencesWindow::on_comboBox_currentIndexChanged(int index) {
+     has_selected_idiom = true;
+}
+
+void PreferencesWindow::on_Combox_tema_currentIndexChanged(int index) {
+   has_selected_theme = true;
+}
+
+PreferencesWindow::PreferencesWindow(QWidget *parent) : QMainWindow(parent), ui_preferences_window_(new Ui::PreferencesWindow) {
+    has_selected_idiom = false;
+    has_selected_theme = false;
+    ui_preferences_window_->setupUi(this);
+    GLOBAL::init_global(ui_preferences_window_);
+    auto value = GLOBAL::json["Fonte"];
+    ui_preferences_window_->fontComboBox->setCurrentFont(QString::fromStdString(nlohmann::to_string(value)));
+    ui_preferences_window_->Combox_tema->setCurrentText(JsonParser::readJsonKeyAsString(GLOBAL::FILE_PATHS::CONFIG,"tema"));
+    UI_FONT::text(GLOBAL::json,ui_preferences_window_);
+    ui_preferences_window_->lineEdit->setEnabled(false);
+
+   if (JsonParser::readJsonKey(GLOBAL::FILE_PATHS::CONFIG,"config").is_null() == false) {
+
+       auto get= QString::fromStdString(JsonParser::readJsonKey(GLOBAL::FILE_PATHS::CONFIG,"config")).remove("'");
+       ui_preferences_window_->lineEdit->setText(QUrl{get}.fileName());
+   }
+    if (GLOBAL::idioma == "Ingles") {
+            setWindowTitle(QString::fromStdString(LanguageUI::getTranslation("en","Sistema de Preferencia"))
+            .remove(""));
+        auto i = LanguageUI::getTranslation("en","Escuro");
+        auto get = QString::fromStdString(nlohmann::to_string(i));
+        JsonParser::removeQuotes(get);
+        ui_preferences_window_->Combox_tema->setItemText(0,get);
+        LanguageUI::applyLanguage(GLOBAL::idioma);
+        ui_preferences_window_->comboBox->setCurrentIndex(1);
+    }
+    if (GLOBAL::idioma == "Português") {
+        setWindowTitle(QString::fromStdString
+            (LanguageUI::getTranslation("Português","Preference System"))
+            .remove(""));
+        LanguageUI::applyLanguage(GLOBAL::idioma);
+        ui_preferences_window_->comboBox->setCurrentIndex(0);
+    }
+}
+
+
+void PreferencesWindow::set_setting (QString Theme,QString idioma,QString Fonte) {
+     ui_preferences_window_->comboBox->setCurrentIndex(LanguageUI::getLanguageIndex(Theme));
+     ui_preferences_window_->Combox_tema->setCurrentText(Theme);
+     ui_preferences_window_->fontComboBox->setCurrentFont(Fonte);
+}
+
+
+void PreferencesWindow::on_btn_search_paste_clicked() {
+    QFileDialog fileDialog(this);
+    fileDialog.setFileMode(QFileDialog::ExistingFile);
+    QString fileName = fileDialog.getOpenFileName(this, tr("Open File"), GLOBAL::FILE_PATHS::CONFIG, tr(
+        fmt::format("Arquivos Vx (*{})",CONFIG_FILE_EXTENSION).c_str()));
+    if (fileName.isEmpty() == true) {
+        return;
+    }
+    qDebug () << ui_preferences_window_->lineEdit->text();
+    ui_preferences_window_->lineEdit->setText(QUrl(fileName).fileName());
+    std::vector<nlohmann::json> json_array;
+    std::array<QString,3> text = {"idioma","Fonte","tema"};
+    for (int i = 0; i < text.size(); i++) {
+        json_array.push_back( JsonParser::readJsonKey(fileName,text[i]));
+        text[i] = QString::fromStdString(nlohmann::to_string(json_array[i]));
+        JsonParser::removeQuotes(text[i]);
+    }
+     set_setting(text[2],text[0],text[1]);
+    LanguageUI::applyLanguage(text[0]);
+
+    UI_FONT::text(text[1],ui_preferences_window_,GLOBAL::WINDOW::UI);
+    ui_controller::applyTheme(text[2]);
+    if (json_array.empty() == false) {
+        json_array.clear();
+    }
+}
+void PreferencesWindow::on_btn_aplicar_clicked() {
+    Json json,json_config;
+    json_config = GLOBAL::json;
+    auto idioma = ui_preferences_window_->comboBox->currentText();
+    QString idi;
+    QString Palavra_chave = "";
+    UI_FONT::text(ui_preferences_window_->fontComboBox->currentText(),ui_preferences_window_,GLOBAL::WINDOW::UI);
+    if (idioma == "Ingles") {
+        Palavra_chave = "Sistema de Preferencia";
+        idi = "en";
+    }
+    if (idioma == "Português") {
+        Palavra_chave = "PreferenceSystem";
+        idi = "Português";
+    }
+    if (has_selected_idiom == true) {
+        LanguageUI::applyLanguage(idioma);
+        setWindowTitle(QString::fromStdString
+          (LanguageUI::getTranslation(idi,Palavra_chave))
+          .remove(""));
+    }
+    if (has_selected_theme == true) {
+        ui_controller::applyTheme(ui_preferences_window_->Combox_tema->currentText());
+    }
+     has_selected_idiom = false;
+     has_selected_theme = false;
+}
+void PreferencesWindow::on_btn_salvar_clicked() {
+
+    ApplicationConfig config;
+    config.language    = ui_preferences_window_->comboBox->currentText();
+    config.fontFamily     = ui_preferences_window_->fontComboBox->currentText();
+    config.themeName     = ui_preferences_window_->Combox_tema->currentText();
+
+    auto file_save = FileManager::save(GLOBAL::FILE_PATHS::CONFIG,config);
+    if (file_save) {
+        qDebug () << "Salvo com sucesso";
+    }else {
+        qDebug () << "Erro ao salvar";
+    }
+}
+
+PreferencesWindow::~PreferencesWindow() {
+    delete ui_preferences_window_;
+    GLOBAL::is_close_window_option = true;
+}

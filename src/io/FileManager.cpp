@@ -18,7 +18,7 @@ enum OS {
     LINUX = 1,
     WINDOWS = -1
 };
-FileSystemInfo FileManger::info_file_system(FileType type) {
+FileSystemInfo FileManager::resolveFilePaths(FileType type) {
     FileSystemInfo Cfile
     {
         "",
@@ -35,7 +35,9 @@ FileSystemInfo FileManger::info_file_system(FileType type) {
         }
     }
     if (getOperatingSystem() == OS::WINDOWS) {
-
+        if (FileType::DATE == type) {
+            
+        }
         if (FileType::PUCSimulador == type) {
             Cfile.file_ = QDir::homePath().toStdString() + "/Documents/PUCSimulador";
         }
@@ -61,7 +63,7 @@ FileSystemInfo FileManger::info_file_system(FileType type) {
     }
     return Cfile;
 }
-const ApplicationConfig info
+const ApplicationConfig defaultConfig
 {
     "Português", // Idioma padrão
     "0.1", // Versão
@@ -77,19 +79,19 @@ const ApplicationConfig info
  * 2. Verifica se o arquivo config.json existe e é válido
  * 3. Se o arquivo de configuração não existir ou for inválido, cria um novo com configurações padrão
  */
-void FileManger::initialize_file_manager() {
-    if (info_file_system(FileType::PUCSimulador).exist == false){
-        std::filesystem::create_directories(info_file_system(FileType::PUCSimulador).file_);
+void FileManager::initialize() {
+    if (resolveFilePaths(FileType::PUCSimulador).exist == false){
+        std::filesystem::create_directories(resolveFilePaths(FileType::PUCSimulador).file_);
     }
-    GLOBAL::PATCH_FILE::CONFIG =   std::move(QString::fromStdString(info_file_system(FileType::CONFIG).file_.string()));
-    GLOBAL::PATCH_FILE::LANGUAGE = std::move(QString::fromStdString(info_file_system(FileType::FILE_IDIOMA).file_idioma.string()));
-    if (info_file_system(FileType::CONFIG).exist == false) {
-        save(GLOBAL::PATCH_FILE::CONFIG, info);
+    GLOBAL::FILE_PATHS::CONFIG =   std::move(QString::fromStdString(resolveFilePaths(FileType::CONFIG).file_.string()));
+    GLOBAL::FILE_PATHS::LANGUAGE = std::move(QString::fromStdString(resolveFilePaths(FileType::FILE_IDIOMA).file_idioma.string()));
+    if (resolveFilePaths(FileType::CONFIG).exist == false) {
+        save(GLOBAL::FILE_PATHS::CONFIG, defaultConfig);
     }
 }
 
 
-bool FileManger::is_null_fileJson(QString path) {
+bool FileManager::isJsonFileEmpty(QString path) {
      QFile file(path);
      file.open(QFile::ReadOnly | QFile::Text);
      nlohmann::json json = {};
@@ -102,7 +104,7 @@ bool FileManger::is_null_fileJson(QString path) {
 }
 
 
-bool FileManger::Load(QString path,Json & get_json) {
+bool FileManager::Load(QString path,Json & get_json) {
     if (path.isEmpty() == true) {
         return false;
     }
@@ -120,7 +122,7 @@ bool FileManger::Load(QString path,Json & get_json) {
     return true;
 }
 
-bool FileManger::Load(const QString path,Json & get_json,bool & is_open) {
+bool FileManager::Load(const QString path,Json & get_json,bool & is_open) {
 
     if (path.isEmpty() == true) {
         return false;
@@ -132,13 +134,13 @@ bool FileManger::Load(const QString path,Json & get_json,bool & is_open) {
       return true;
 }
 
-FileStatus FileManger::is_open(QString path) {
+FileStatus FileManager::checkFileStatus(QString path) {
     QFile file(path);
     bool is_open = file.open(QFile::Text | QFile::ReadOnly);
     FileStatus obj = {is_open, path};
     return obj;
 }
-bool FileManger::save(QString path, std::variant<item_vector_array, ApplicationConfig> obj) {
+bool FileManager::save(QString path, std::variant<item_vector_array, ApplicationConfig> obj) {
     if (path.isEmpty() == true) {
         return false;
     }
@@ -170,14 +172,14 @@ bool FileManger::save(QString path, std::variant<item_vector_array, ApplicationC
         if (std::holds_alternative<ApplicationConfig>(obj)) {
             // nlohmann::json json = {
             //     {"idioma" ,    std::get<info_config_list>(obj).idioma.toStdString()},
-            //     {"config",     GLOBAL::PATCH_FILE::CONFIG.toStdString()},
+            //     {"config",     GLOBAL::FILE_PATHS::CONFIG.toStdString()},
             //     {"tema",       std::get<info_config_list>(obj).Theme.toStdString()},
             //     {"Fonte",      std::get<info_config_list>(obj).fonte.toStdString()},
             // };
 
-           auto  json = json_parser::info_file(
-                             INFO{std::get<ApplicationConfig>(obj).language.toStdString(),
-                                   GLOBAL::PATCH_FILE::CONFIG.toStdString(),
+           auto  json = JsonParser::buildConfigJson(
+                             ConfigFileData{std::get<ApplicationConfig>(obj).language.toStdString(),
+                                   GLOBAL::FILE_PATHS::CONFIG.toStdString(),
                                     std::get<ApplicationConfig>(obj).themeName.toStdString(),
                                    std::get<ApplicationConfig>(obj).fontFamily.toStdString()});
             file << json.dump(2);
@@ -192,4 +194,4 @@ bool FileManger::save(QString path, std::variant<item_vector_array, ApplicationC
     }
     return false;
 }
-FileManger::FileManger() {}
+FileManager::FileManager() {}

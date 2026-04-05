@@ -2,62 +2,61 @@
 // Created by KoTz on 23/10/2025.
 //
 
-#include "ui/LanguageManager.h"
+#include "managers/LanguageManager.h"
 #include <ui_option.h>
 #include "io/FileManager.h"
 #include "utils/GlobalAccess.h"
 
 LanguageUI::LanguageUI() {}
 
-void LanguageUI::initialize_language_ui(Json & get_json ,Ui::_windows_ * ui_windows__,QString & ui_language ) {
-    if (get_json.empty() == true) {
+void LanguageUI::initialize(Json & config, Ui::MainWindow * mainWindowUi, QString & currentLanguage) {
+    if (config.empty() == true) {
          return;
      }
-    QFile filew{GLOBAL::PATCH_FILE::LANGUAGE};
-    if (filew.exists() == true) {
-        filew.open(QFile::ReadOnly | QFile::Text);
-        nlohmann::json json = nlohmann::json::parse(filew.readAll().toStdString());
-        QString idioma = QString::fromStdString(get_json["idioma"]);
-        ui_language = idioma;
-        // IDIOMA
-        UpdateLanguage_UI(idioma);
+    QFile file{GLOBAL::FILE_PATHS::LANGUAGE};
+    if (file.exists() == true) {
+        file.open(QFile::ReadOnly | QFile::Text);
+        nlohmann::json json = nlohmann::json::parse(file.readAll().toStdString());
+        QString idioma = QString::fromStdString(config["idioma"]);
+        currentLanguage = idioma;
+        applyLanguage(idioma);
     }
 }
-nlohmann::json LanguageUI::getLanguageJsonValue(QString ui_language, QString language_key) {
+nlohmann::json LanguageUI::getTranslation(QString languageKey, QString textKey) {
     nlohmann::json json;
-    if (ui_language.isEmpty() == true && language_key.isEmpty() == true) {
+    if (languageKey.isEmpty() == true && textKey.isEmpty() == true) {
         return {};
     }
-    if (ui_language == "Ingles") {
-        ui_language = "en";
+    if (languageKey == "Ingles") {
+        languageKey = "en";
     }
-    QFile filew{GLOBAL::PATCH_FILE::LANGUAGE};
-    filew.open(QFile::ReadOnly | QFile::Text);
+    QFile file{GLOBAL::FILE_PATHS::LANGUAGE};
+    file.open(QFile::ReadOnly | QFile::Text);
     try {
-       json = nlohmann::json::parse(filew.readAll().toStdString());
+       json = nlohmann::json::parse(file.readAll().toStdString());
     }catch (nlohmann::json::exception & e) {
         return nlohmann::json {};
     }
-    return json[ui_language.toStdString()][language_key.toStdString()];
+    return json[languageKey.toStdString()][textKey.toStdString()];
 }
 
-int LanguageUI::IsLanguageValid(QString language_key) {
-    if (language_key == "Ingles" || language_key == "en" || language_key == "en-us" || language_key == "En" || language_key == "EN") {
+int LanguageUI::getLanguageIndex(QString languageKey) {
+    if (languageKey == "Ingles" || languageKey == "en" || languageKey == "en-us" || languageKey == "En" || languageKey == "EN") {
         return 1;
     }
-    if (language_key == "Português"|| language_key == "pt" || language_key == "pt-br"
-            || language_key == "portugues"
-            || language_key == "Portugues") {
+    if (languageKey == "Português"|| languageKey == "pt" || languageKey == "pt-br"
+            || languageKey == "portugues"
+            || languageKey == "Portugues") {
         return 0;
     }
 }
 
-void LanguageUI::UpdateLanguage_UI(QString & Language_Key) {
+void LanguageUI::applyLanguage(QString & languageKey) {
 
-    if (Language_Key.isEmpty()) {
+    if (languageKey.isEmpty()) {
         return;
     }
-    QFile filew{GLOBAL::PATCH_FILE::LANGUAGE};
+    QFile filew{GLOBAL::FILE_PATHS::LANGUAGE};
     filew.open(QFile::ReadOnly | QFile::Text);
     nlohmann::json json;
     try {
@@ -70,7 +69,7 @@ void LanguageUI::UpdateLanguage_UI(QString & Language_Key) {
     std::array<QString,10>  menu_option;
     std::vector<QString>    tabela_aluno(GLOBAL::WINDOW::UI->tableWidget->columnCount());
 
-        if (Language_Key == "Ingles" || Language_Key == "en" || Language_Key == "en-us" || Language_Key == "En" || Language_Key == "EN") {
+        if (languageKey == "Ingles" || languageKey == "en" || languageKey == "en-us" || languageKey == "En" || languageKey == "EN") {
 
             menu_arquivo[0] = QString::fromStdString(json["en"]["arquivo"]).remove('"');
             menu_arquivo[1] = QString::fromStdString(json["en"]["novo"]).remove('"');
@@ -95,9 +94,9 @@ void LanguageUI::UpdateLanguage_UI(QString & Language_Key) {
             menu_option[3] =  QString::fromStdString(json["en"]["Tema"]).remove('"');
             menu_option[4] =  QString::fromStdString(json["en"]["Fonte"]).remove('"');
         }
-        if (Language_Key == "Português"|| Language_Key == "pt" || Language_Key == "pt-br"
-            || Language_Key == "portugues"
-            || Language_Key == "Portugues") {
+        if (languageKey == "Português"|| languageKey == "pt" || languageKey == "pt-br"
+            || languageKey == "portugues"
+            || languageKey == "Portugues") {
 
             menu_arquivo[0] = QString::fromStdString(json["Português"]["file"]).remove('"');
             menu_arquivo[1] = QString::fromStdString(json["Português"]["new"]).remove('"');
