@@ -106,7 +106,7 @@ target_link_libraries(PucSimulator PRIVATE
 if(UNIX AND NOT APPLE)
 
     set_target_properties(${PROJECT_NAME} PROPERTIES
-            INSTALL_RPATH "$ORIGIN"
+            INSTALL_RPATH "$ORIGIN;/home/kotz/Qt/6.11.0/gcc_64/lib"
             BUILD_WITH_INSTALL_RPATH TRUE
     )
 

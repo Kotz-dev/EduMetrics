@@ -33,7 +33,7 @@ PreferencesWindow::PreferencesWindow(QWidget *parent) : QMainWindow(parent), ui_
     has_selected_idiom = false;
     has_selected_theme = false;
     ui_preferences_window_->setupUi(this);
-    GLOBAL::init_global(ui_preferences_window_);
+    GLOBAL::init_global(this);
     auto value = GLOBAL::json["Fonte"];
     ui_preferences_window_->fontComboBox->setCurrentFont(QString::fromStdString(nlohmann::to_string(value)));
     ui_preferences_window_->Combox_tema->setCurrentText(JsonParser::readJsonKeyAsString(GLOBAL::FILE_PATHS::CONFIG,"tema"));
@@ -80,7 +80,6 @@ void PreferencesWindow::on_btn_search_paste_clicked() {
     if (fileName.isEmpty() == true) {
         return;
     }
-    qDebug () << ui_preferences_window_->lineEdit->text();
     ui_preferences_window_->lineEdit->setText(QUrl(fileName).fileName());
     std::vector<nlohmann::json> json_array;
     std::array<QString,3> text = {"idioma","Fonte","tema"};

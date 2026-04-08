@@ -145,10 +145,10 @@ void LanguageUI::applyLanguage(QString & languageKey) {
             GLOBAL::WINDOW::UI->actionOpition->setText(menu_ferramentas[1]);;
 
           if (GLOBAL::WINDOW::_ui_option != nullptr) {
-               GLOBAL::WINDOW::_ui_option->label->setText(menu_option[0]);
-               GLOBAL::WINDOW::_ui_option->btn_aplicar->setText(menu_option[1]);
-               GLOBAL::WINDOW::_ui_option->btn_salvar->setText(menu_option[2]);
-               GLOBAL::WINDOW::_ui_option->label_tema->setText(menu_option[3]);
+               GLOBAL::WINDOW::_ui_option->ui()->label->setText(menu_option[0]);
+               GLOBAL::WINDOW::_ui_option->ui()->btn_aplicar->setText(menu_option[1]);
+               GLOBAL::WINDOW::_ui_option->ui()->btn_salvar->setText(menu_option[2]);
+               GLOBAL::WINDOW::_ui_option->ui()->label_tema->setText(menu_option[3]);
           }
     }
 

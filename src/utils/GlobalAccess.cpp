@@ -11,7 +11,7 @@ namespace GLOBAL {
     bool is_close_window_option;
     namespace WINDOW {
         Ui::MainWindow * UI;
-        Ui::PreferencesWindow    *_ui_option;
+        PreferencesWindow *_ui_option;
     }
     nlohmann::json json;
     void init_global(Ui::MainWindow * windows) {
@@ -19,7 +19,7 @@ namespace GLOBAL {
             WINDOW::UI = windows;
         }
     }
-    void init_global( Ui::PreferencesWindow * option) {
+    void init_global( PreferencesWindow * option) {
         if (option != nullptr) {
             WINDOW::_ui_option = option;
         }

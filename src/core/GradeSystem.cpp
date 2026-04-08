@@ -10,7 +10,6 @@ void GradeSystem::calculateNeededGrade(bool n1IsLower, bool n2IsLower, bool areE
     auto  N2 = this->N2;
     auto  NF = this->final_grade;
 
-    QString is = "";
     const auto items = this->table_widget_->item(row,TYPE_GRADE::FALTA_MEDIA);
     if (n1IsLower == true) {
          for (double i = 0; i <= 10; i+=00.1) {

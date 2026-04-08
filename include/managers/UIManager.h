@@ -13,6 +13,14 @@ namespace Ui { class MainWindow; class Style;}
 QT_END_NAMESPACE
 
 
+const std::string ui_styles                = "resources/styles/ui_styles.qss";
+const std::string ui_styles_tabel_widget__ = "resources/styles/styles_tabel_widget.qss";
+const std::string window_dark___   = "resources/styles/window_dark.qss";
+const std::string window_light___  = "resources/styles/window_branco.qss";
+const std::string button_default_  = "resources/styles/button_default.qss";
+const std::string button_save_     = "resources/styles/button_save.qss";
+const std::string PreferencesWindowStyles = "resources/styles/PreferencesWindowStyles.qss";
+
 #ifdef _WIN32
     static   std::filesystem::path ui_styles_ =  std::filesystem::current_path().remove_filename() / "resources/styles/ui_styles.qss";
     static   std::filesystem::path ui_styles_tabel_widget = std::filesystem::current_path().remove_filename() / "resources/styles/styles_tabel_widget.qss";
@@ -22,13 +30,25 @@ QT_END_NAMESPACE
 
 
 #ifdef __linux__
-    // static   std::filesystem::path ui_styles_ =  std::filesystem::current_path().remove_filename() / "styles\\ui_styles.qss";
-    // static   QString ui_styles__;
-    // static   QString ui_styles_tabel_widget;
-    // static   QString window_light;
+    static   std::filesystem::path ui_styles_ =  std::filesystem::current_path().remove_filename() / ui_styles;
+    static   std::filesystem::path ui_styles_tabel_widget = std::filesystem::current_path().remove_filename() / ui_styles_tabel_widget__;
+    static   std::filesystem::path window_dark = std::filesystem::current_path().remove_filename() /  window_dark___;
+    static   std::filesystem::path window_light = std::filesystem::current_path().remove_filename() / window_light___;
+    static   std::filesystem::path button_default = std::filesystem::current_path().remove_filename() /  button_default_;
+    static   std::filesystem::path button_save = std::filesystem::current_path().remove_filename() / button_save_;
+    static   std::filesystem::path _PreferencesWindow_ = std::filesystem::current_path().remove_filename() / PreferencesWindowStyles;
 #endif
 
-
+const std::array<std::filesystem::path, 7> style_sheet_paths =
+    {
+    ui_styles_,
+    ui_styles_tabel_widget,
+    window_dark,
+    window_light,
+    button_default,
+    button_save,
+    _PreferencesWindow_
+    };
 
 
 namespace Style_Table {
@@ -48,8 +68,8 @@ class ui_controller {
 public:
     static void applyTableStyle(Ui_MainWindow * ui);
     static void applyButtonStyles(TYPE windowType, Ui_MainWindow * ui);
-    static void applyDarkTheme(Ui_MainWindow * ui);
-    static void applyLightTheme(Ui_MainWindow * ui, Ui::PreferencesWindow *op);
+    static void applyDarkTheme(Ui_MainWindow * ui, PreferencesWindow *Prefe);
+    static void applyLightTheme(Ui_MainWindow * ui,PreferencesWindow *op);
 
     static void applyTheme();
     static void applyTheme(QString themeName);

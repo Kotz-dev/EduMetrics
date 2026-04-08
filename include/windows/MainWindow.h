@@ -43,7 +43,6 @@ private:
     Ui::MainWindow *ui;
     QTimer *timer;
     std::shared_ptr<GradeSystem> system_notas;
-    ui_controller *is;
     FileManager file;
     std::vector<StudentRecord>  item_list_;
 

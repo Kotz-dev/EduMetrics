@@ -277,7 +277,6 @@ void MainWindow::on_actionNovo_triggered() {
 }
 
 MainWindow::~MainWindow() {
-    delete is;
     delete ui;
 }
 

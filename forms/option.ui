@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>385</width>
+    <width>434</width>
     <height>190</height>
    </rect>
   </property>
@@ -22,6 +22,9 @@
       <width>400</width>
       <height>216</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 255, 255);</string>
     </property>
     <property name="frameShape">
      <enum>QFrame::Shape::NoFrame</enum>
@@ -41,6 +44,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QLabel" name="label">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);</string>
+        </property>
         <property name="text">
          <string>idioma</string>
         </property>
@@ -74,6 +80,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QLabel" name="label_tema">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);</string>
+        </property>
         <property name="text">
          <string>Tema:</string>
         </property>
@@ -122,13 +131,16 @@
       <rect>
        <x>170</x>
        <y>50</y>
-       <width>210</width>
+       <width>291</width>
        <height>26</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
        <widget class="QLabel" name="label_fonte">
+        <property name="styleSheet">
+         <string notr="true">color: rgb(255, 255, 255);</string>
+        </property>
         <property name="text">
          <string>Fonte: </string>
         </property>
@@ -148,6 +160,22 @@
        <height>24</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	background-color: rgb(94, 92, 100);
+    border-radius : 5px;
+	color: rgb(255, 255, 255);
+}
+QPushButton:hover {
+	background-color: rgb(36, 31, 49);
+    border-radius:5px;
+     color: rgb(255, 255, 255);
+}
+QPushButton:pressed {
+	background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+}</string>
+     </property>
      <property name="text">
       <string>Procurar</string>
      </property>
@@ -166,6 +194,22 @@
        <width>80</width>
        <height>40</height>
       </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+	background-color: rgb(94, 92, 100);
+    border-radius : 5px;
+	color: rgb(255, 255, 255);
+}
+QPushButton:hover {
+	background-color: rgb(36, 31, 49);
+    border-radius:5px;
+     color: rgb(255, 255, 255);
+}
+QPushButton:pressed {
+	background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+}</string>
      </property>
      <property name="text">
       <string>Aplicar</string>

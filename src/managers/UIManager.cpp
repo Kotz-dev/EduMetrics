@@ -12,7 +12,7 @@ Style_Table::Style::Style() {
 
 void Style_Table::Style::setRowResult(QTableWidget *table, int row, int status) {
      if (table != nullptr) {
-         if (status == 0) {;
+         if (status == 0) {
              table->item(row,7)->setText("Reprovado por falta");
              table->item(row,7)->setBackground(QColor(Qt::red));
          }
@@ -37,11 +37,12 @@ void Style_Table::Style::clearCell(QTableWidget *table, int row, int column) {
 }
 
 void ui_controller::applyTheme(QString themeName) {
+
     if (themeName == "Claro") {
-        applyLightTheme(GLOBAL::WINDOW::UI,nullptr);
+        applyLightTheme(GLOBAL::WINDOW::UI,GLOBAL::WINDOW::_ui_option);
     }
     if (themeName == "Escuro") {
-        applyDarkTheme(GLOBAL::WINDOW::UI);
+        applyDarkTheme(GLOBAL::WINDOW::UI,GLOBAL::WINDOW::_ui_option);
     }
 }
 
@@ -50,25 +51,32 @@ void ui_controller::applyTheme() {
        applyLightTheme(GLOBAL::WINDOW::UI,nullptr);
     }
     if ((JsonParser::readJsonKey(GLOBAL::FILE_PATHS::CONFIG,"tema") == "Escuro")) {
-        applyDarkTheme(GLOBAL::WINDOW::UI);
+        applyDarkTheme(GLOBAL::WINDOW::UI,GLOBAL::WINDOW::_ui_option);
     }
 }
 
-void ui_controller::applyLightTheme(Ui_MainWindow *ui, Ui::PreferencesWindow *op) {
-    QFile filew{ui_styles_tabel_widget};
-    if (ui != nullptr) {
-        filew.open(QFile::ReadOnly);
-        QString styleSheet = filew.readAll();
-        ui->tableWidget->setStyleSheet(styleSheet + "QTableWidget QLineEdit { border: 1px solid #aaaaaa; }");
-        ui->menuBar->setStyleSheet("background-color: #ededed;color: #000000;");
-        ui->frame->setStyleSheet("background-color: rgb(255, 255, 255);color: #000000;");
-        ui->centralwidget->setStyleSheet("background-color: rgb(255, 255, 255);color: #000000;");
+QByteArray findw (QString name) {
+    for (auto & i : style_sheet_paths ) {
+        if (QString::compare(QUrl(i.c_str()).fileName(),name) == 0) {
+            QFile file(i);
+            if (file.open(QFile::ReadOnly)){}
+            return file.readAll();
+        }
     }
+    return "";
 }
 
+void ui_controller::applyLightTheme(Ui_MainWindow *ui,PreferencesWindow *op) {
 
+    if (ui != nullptr && op != nullptr) {
+            op->setStyleSheet(findw(PreferencesWindowStyles.c_str()));
+            op->ui()->btn_salvar->setStyleSheet(findw(button_save_.c_str()));
+            op->ui()->btn_aplicar->setStyleSheet(findw(button_default_.c_str()));
+            op->ui()->btn_search_paste->setStyleSheet(findw(button_default_.c_str()));
+    }
+}
 void ui_controller::applyTableStyle(Ui_MainWindow *ui) {
-    QFile filew{QString::fromStdString(ui_styles_tabel_widget.string())};
+    QFile filew(ui_styles_tabel_widget);
     if (ui != nullptr) {
         filew.open(QFile::ReadOnly);
         QString styleSheet = filew.readAll();
@@ -76,13 +84,12 @@ void ui_controller::applyTableStyle(Ui_MainWindow *ui) {
     }
 }
 
-void ui_controller::applyDarkTheme(Ui_MainWindow *ui) {
-    qDebug() << window_dark;
-    QFile filew{window_dark};
-    if (ui != nullptr) {
-        filew.open(QFile::ReadOnly);
+void ui_controller::applyDarkTheme(Ui_MainWindow *ui,PreferencesWindow *Prefe) {
+
+    QFile filew(window_dark);
+    if (ui != nullptr && Prefe != nullptr) {
+        if (filew.open(QFile::ReadOnly)) {}
         QString styleSheet = filew.readAll();
-       // ui->tableWidget->setStyleSheet("");
         ui->menuBar->setStyleSheet("");
         ui->frame->setStyleSheet("");
         ui->centralwidget->setStyleSheet("");
@@ -90,7 +97,7 @@ void ui_controller::applyDarkTheme(Ui_MainWindow *ui) {
 }
 
 void ui_controller::applyButtonStyles(TYPE TY,Ui_MainWindow * ui) {
-    QFile filew{ui_styles_};
+    QFile filew(ui_styles_);
 
 
    if (TY == TYPE::MAIN_WINDOW) {

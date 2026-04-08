@@ -43,7 +43,6 @@ enum FileType {
 struct FileSystemInfo {
     std::filesystem::path file_;
     std::filesystem::path file_idioma;
-    // std::filesystem::path file_data;
     bool exist;
 };
 

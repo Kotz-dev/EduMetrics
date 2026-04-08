@@ -1,0 +1,3 @@
+QComboBox {
+	background-color: rgb(154, 153, 150);
+}

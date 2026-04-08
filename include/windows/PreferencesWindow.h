@@ -29,8 +29,8 @@ private slots:
     void set_setting (QString Theme,QString idioma,QString Fonte);
 public:
     explicit PreferencesWindow(QWidget *parent = nullptr);
-
     ~PreferencesWindow() override;
+    Ui::PreferencesWindow* ui() { return ui_preferences_window_; }
 
 private:
     Ui::PreferencesWindow *ui_preferences_window_;
