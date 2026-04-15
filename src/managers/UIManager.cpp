@@ -10,6 +10,53 @@
 Style_Table::Style::Style() {
 }
 
+std::string ts_ () {
+    if (getOperatingSystem() == 1) {
+        return "//";
+    }
+    if (getOperatingSystem() == -1) {
+        return "\\";
+    }
+    return "";
+}
+
+std::string gets (std::string name ) {
+    bool windows_ = false;
+    bool linux_ = false;
+
+    if (getOperatingSystem() == 1) {
+        linux_ = true;
+        windows_ = false;
+    }
+    if (getOperatingSystem() == -1) {
+        windows_ = true;
+        linux_ = false;
+    }
+    std::array<std::string, 7> style_sheet_paths_ =  {
+        "resources//styles//ui_styles.qss", // 0
+         "resources//styles//styles_tabel_widget.qss", // 1
+         "resources//styles//window_dark.qss", // 2
+         "resources//styles//window_branco.qss", // 3
+         "resources//styles//button_default.qss", // 4
+         "resources//styles//button_save.qss",  // 5
+         "resources//styles//PreferencesWindowStyles.qss" // 6
+     };
+
+    for (auto & path : style_sheet_paths_) {
+        if (path.find(name) != std::string::npos) {
+            if (windows_) {
+                std::ranges::replace(path,'//','\\');
+                return path;
+            }
+            if (linux_) {
+                std::ranges::replace(path,'\\','//');
+                return path;
+            }
+        }
+    }
+    return "";
+}
+
 void Style_Table::Style::setRowResult(QTableWidget *table, int row, int status) {
      if (table != nullptr) {
          if (status == 0) {
@@ -69,12 +116,12 @@ QByteArray findw (QString name) {
 
 void ui_controller::applyLightTheme(Ui_MainWindow *ui,PreferencesWindow *op) {
     bool get = op != nullptr;
-    qDebug () << get;
+    qDebug () << gets("button_default.qss");
     if (ui != nullptr && op != nullptr) {
-          op->setStyleSheet(findw(PreferencesWindowStyles.c_str()));
-          op->ui()->btn_salvar->setStyleSheet(findw(button_save_.c_str()));
-          op->ui()->btn_aplicar->setStyleSheet(findw(button_default_.c_str()));
-          op->ui()->btn_search_paste->setStyleSheet(findw(button_default_.c_str()));
+           op->setStyleSheet(findw(QString::fromStdString(gets("PreferencesWindowStyles.qss"))));
+           op->ui()->btn_salvar->setStyleSheet(findw(QString::fromStdString(gets("button_save.qss"))));
+           op->ui()->btn_aplicar->setStyleSheet(findw(QString::fromStdString(gets("button_default.qss"))));
+          op->ui()->btn_search_paste->setStyleSheet(findw(QString::fromStdString(gets("button_default.qss"))));
     }
 }
 void ui_controller::applyTableStyle(Ui_MainWindow *ui) {

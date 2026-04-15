@@ -7,11 +7,6 @@
 #include "JsonParser.h"
 
 
-  // QString ui_styles_ = "";
-  // QString ui_styles__= "";
-  // QString ui_styles_tabel_widget= "";
-  // QString window_light= "";
-
 
 enum OS {
     LINUX = 1,
