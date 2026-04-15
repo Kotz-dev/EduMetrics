@@ -4,7 +4,6 @@
 #include "io/FileManager.h"
 
 #include <iostream>
-#include "FileConverter.h"
 #include "JsonParser.h"
 
 
@@ -103,6 +102,15 @@ bool FileManager::isJsonFileEmpty(QString path) {
      return false;
 }
 
+bool isFile (std::fstream & file) {
+    if (file.good()) {
+        file.close();
+        return true;
+    }
+    if (file.fail()) {
+        return false;
+    }
+}
 
 bool FileManager::Load(QString path,Json & get_json) {
     if (path.isEmpty() == true) {
@@ -169,29 +177,16 @@ bool FileManager::save(QString path, std::variant<item_vector_array, Application
                 file << json.dump(4);
             }
         }
-        if (std::holds_alternative<ApplicationConfig>(obj)) {
-            // nlohmann::json json = {
-            //     {"idioma" ,    std::get<info_config_list>(obj).idioma.toStdString()},
-            //     {"config",     GLOBAL::FILE_PATHS::CONFIG.toStdString()},
-            //     {"tema",       std::get<info_config_list>(obj).Theme.toStdString()},
-            //     {"Fonte",      std::get<info_config_list>(obj).fonte.toStdString()},
-            // };
-
-           auto  json = JsonParser::buildConfigJson(
-                             ConfigFileData{std::get<ApplicationConfig>(obj).language.toStdString(),
-                                   GLOBAL::FILE_PATHS::CONFIG.toStdString(),
-                                    std::get<ApplicationConfig>(obj).themeName.toStdString(),
-                                   std::get<ApplicationConfig>(obj).fontFamily.toStdString()});
+        if (std::holds_alternative<ApplicationConfig>(obj))
+        {
+            auto  json = JsonParser::buildConfigJson(
+                              ConfigFileData{std::get<ApplicationConfig>(obj).language.toStdString(),
+                                    GLOBAL::FILE_PATHS::CONFIG.toStdString(),
+                                     std::get<ApplicationConfig>(obj).themeName.toStdString(),
+                                    std::get<ApplicationConfig>(obj).fontFamily.toStdString()});
             file << json.dump(2);
         }
-       auto value = FileVx::converteJsonFromFileVX(QString::fromStdString(path.toStdString()));
-        if (value == 0 || value == -2 || value == -1) {
-            return false;
-        }
-        if (value == 1 || value == 2) {
-            return true;
-        }
     }
-    return false;
+   return isFile(file);
 }
 FileManager::FileManager() {}

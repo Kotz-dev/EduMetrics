@@ -6,6 +6,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+
 # -------------------------
 # Flags de compilação (compatível Windows/Linux)
 # -------------------------
@@ -19,6 +20,8 @@ else()
     # Debug com GCC/Clang (Linux/Mac/MinGW)
     add_compile_options(-g -O0)
 endif()
+
+
 
 # -------------------------
 # Bibliotecas externas
@@ -71,9 +74,6 @@ add_executable(PucSimulator
         include/io/FileManager.h
         src/io/JsonParser.cpp
         include/io/JsonParser.h
-        src/io/FileConverter.cpp
-        include/io/FileConverter.h
-
         # Managers
         src/managers/UIManager.cpp
         include/managers/UIManager.h
@@ -94,6 +94,7 @@ add_executable(PucSimulator
 # -------------------------
 # Linkagem
 # -------------------------
+
 target_link_libraries(PucSimulator PRIVATE
         Qt::Core
         Qt::Gui

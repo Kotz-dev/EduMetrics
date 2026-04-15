@@ -7,7 +7,6 @@
 
 #include "windows/MainWindow.h"
 #include <QDebug>
-#include "io/FileConverter.h"
 #include "ui_MainWindow.h"
 #include "io/FileManager.h"
 
@@ -148,9 +147,13 @@ void MainWindow::saveTableData(QString filePath_,SaveMode saveMode) {
     }
     if (is_file_save) {
         ui->label_3->setText("Salvo !");
+        QTimer::singleShot(2000, this, [this]() { ui->label_3->clear(); });
+
     }
     else {
         ui->label_3->setText("Falha de salvamento");
+        QTimer::singleShot(2000, this, [this]() { ui->label_3->clear(); });
+
     }
     item_list_.clear();
 }
@@ -161,17 +164,10 @@ void MainWindow::on_actionOpition_triggered() {
 }
 void MainWindow::on_actionSalvar_como_triggered() {
     std::unique_ptr<QFileDialog> fileDialog = std::make_unique<QFileDialog>(this);
-    auto selectedFile = fileDialog->getSaveFileName(this,"Salvar o arquivo","","");
-
+    auto selectedFile = fileDialog->getSaveFileName(this,"Salvar o arquivo","data.vx","Arquivos VX (*.vx)");
     std::string filePath = selectedFile.toStdString();
-    if (filePath.find(".json") == std::string::npos) {
-         filePath = filePath += ".json";
-         selectedFile = QString::fromStdString(filePath);
-    }
-    if (selectedFile!= nullptr && filePath.find(".json") != std::string::npos) {
-         saveTableData(selectedFile,SAVE_AS);
-    }else {
-        ui->label_3->setText("Falha de salvamento necessario Json ");
+    if (selectedFile.isEmpty() == false && filePath.find(".vx") != std::string::npos) {
+        saveTableData(selectedFile,SAVE_AS);
     }
 }
 /**

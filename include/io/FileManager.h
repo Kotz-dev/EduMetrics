@@ -60,6 +60,8 @@ inline int getOperatingSystem () {
 
 using Json = nlohmann::json;
 
+static bool isFile(std::fstream & file);
+
 struct  FileStatus {
      bool isOpen   = false;
      QString filePath = "";

@@ -34,6 +34,7 @@ PreferencesWindow::PreferencesWindow(QWidget *parent) : QMainWindow(parent), ui_
     has_selected_theme = false;
     ui_preferences_window_->setupUi(this);
     GLOBAL::init_global(this);
+    ui_controller::applyTheme();
     auto value = GLOBAL::json["Fonte"];
     ui_preferences_window_->fontComboBox->setCurrentFont(QString::fromStdString(nlohmann::to_string(value)));
     ui_preferences_window_->Combox_tema->setCurrentText(JsonParser::readJsonKeyAsString(GLOBAL::FILE_PATHS::CONFIG,"tema"));

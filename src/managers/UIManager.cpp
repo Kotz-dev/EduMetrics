@@ -48,7 +48,7 @@ void ui_controller::applyTheme(QString themeName) {
 
 void ui_controller::applyTheme() {
     if ((JsonParser::readJsonKey(GLOBAL::FILE_PATHS::CONFIG,"tema") == "Claro")) {
-       applyLightTheme(GLOBAL::WINDOW::UI,nullptr);
+       applyLightTheme(GLOBAL::WINDOW::UI,GLOBAL::WINDOW::_ui_option);
     }
     if ((JsonParser::readJsonKey(GLOBAL::FILE_PATHS::CONFIG,"tema") == "Escuro")) {
         applyDarkTheme(GLOBAL::WINDOW::UI,GLOBAL::WINDOW::_ui_option);
@@ -57,9 +57,10 @@ void ui_controller::applyTheme() {
 
 QByteArray findw (QString name) {
     for (auto & i : style_sheet_paths ) {
-        if (QString::compare(QUrl(i.c_str()).fileName(),name) == 0) {
+
+        if (QString(QUrl(QString::fromStdString(i.string())).fileName()).contains(name) == true) {
             QFile file(i);
-            if (file.open(QFile::ReadOnly)){}
+             if (file.open(QFile::ReadOnly)){}
             return file.readAll();
         }
     }
@@ -67,12 +68,13 @@ QByteArray findw (QString name) {
 }
 
 void ui_controller::applyLightTheme(Ui_MainWindow *ui,PreferencesWindow *op) {
-
+    bool get = op != nullptr;
+    qDebug () << get;
     if (ui != nullptr && op != nullptr) {
-            op->setStyleSheet(findw(PreferencesWindowStyles.c_str()));
-            op->ui()->btn_salvar->setStyleSheet(findw(button_save_.c_str()));
-            op->ui()->btn_aplicar->setStyleSheet(findw(button_default_.c_str()));
-            op->ui()->btn_search_paste->setStyleSheet(findw(button_default_.c_str()));
+          op->setStyleSheet(findw(PreferencesWindowStyles.c_str()));
+          op->ui()->btn_salvar->setStyleSheet(findw(button_save_.c_str()));
+          op->ui()->btn_aplicar->setStyleSheet(findw(button_default_.c_str()));
+          op->ui()->btn_search_paste->setStyleSheet(findw(button_default_.c_str()));
     }
 }
 void ui_controller::applyTableStyle(Ui_MainWindow *ui) {
