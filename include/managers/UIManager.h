@@ -14,29 +14,15 @@ QT_END_NAMESPACE
 
 
 
-std::string gets (std::string name);
-std::string ts_();
+QString gets (std::string name);
 
-
-#ifdef _WIN32
-    static   std::filesystem::path ui_styles_ =  std::filesystem::current_path().remove_filename() / ui_styles;
-    static   std::filesystem::path ui_styles_tabel_widget = std::filesystem::current_path().remove_filename() / ui_styles_tabel_widget__;
-    static   std::filesystem::path window_dark = std::filesystem::current_path().remove_filename() /  window_dark___;
-    static   std::filesystem::path window_light = std::filesystem::current_path().remove_filename() / window_light___;
-    static   std::filesystem::path button_default = std::filesystem::current_path().remove_filename() /  button_default_;
-    static   std::filesystem::path button_save = std::filesystem::current_path().remove_filename() / button_save_;
-    static   std::filesystem::path _PreferencesWindow_ = std::filesystem::current_path().remove_filename() / PreferencesWindowStyles;
-#endif
-
-#ifdef __linux__
-    static   std::filesystem::path ui_styles_ =  std::filesystem::current_path().remove_filename() / gets("ui_styles.qss");
-    static   std::filesystem::path ui_styles_tabel_widget = std::filesystem::current_path().remove_filename() / gets("styles_tabel_widget.qss");
-    static   std::filesystem::path window_dark = std::filesystem::current_path().remove_filename() /  gets("window_dark.qss");
-    static   std::filesystem::path window_light = std::filesystem::current_path().remove_filename() / gets("window_branco.qss");
-    static   std::filesystem::path button_default = std::filesystem::current_path().remove_filename() /  gets("button_default.qss");
-    static   std::filesystem::path button_save = std::filesystem::current_path().remove_filename() / gets("button_save.qss");
-    static   std::filesystem::path _PreferencesWindow_ = std::filesystem::current_path().remove_filename() / gets("PreferencesWindowStyles.qss");
-#endif
+static std::filesystem::path ui_styles_          = std::filesystem::current_path().remove_filename() / "resources/styles/ui_styles.qss";
+static std::filesystem::path ui_styles_tabel_widget = std::filesystem::current_path().remove_filename() / "resources/styles/styles_tabel_widget.qss";
+static std::filesystem::path window_dark         = std::filesystem::current_path().remove_filename() / "resources/styles/window_dark.qss";
+static std::filesystem::path window_light        = std::filesystem::current_path().remove_filename() / "resources/styles/window_branco.qss";
+static std::filesystem::path button_default      = std::filesystem::current_path().remove_filename() / "resources/styles/button_default.qss";
+static std::filesystem::path button_save         = std::filesystem::current_path().remove_filename() / "resources/styles/button_save.qss";
+static std::filesystem::path _PreferencesWindow_ = std::filesystem::current_path().remove_filename() / "resources/styles/PreferencesWindowStyles.qss";
 
 const std::array<std::filesystem::path, 7> style_sheet_paths =
     {

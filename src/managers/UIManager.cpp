@@ -3,58 +3,21 @@
 //
 
 #include "managers/UIManager.h"
-
 #include "GlobalAccess.h"
 #include "JsonParser.h"
 
 Style_Table::Style::Style() {
 }
-
-std::string ts_ () {
-    if (getOperatingSystem() == 1) {
-        return "//";
-    }
-    if (getOperatingSystem() == -1) {
-        return "\\";
-    }
-    return "";
-}
-
-std::string gets (std::string name ) {
-    bool windows_ = false;
-    bool linux_ = false;
-
-    if (getOperatingSystem() == 1) {
-        linux_ = true;
-        windows_ = false;
-    }
-    if (getOperatingSystem() == -1) {
-        windows_ = true;
-        linux_ = false;
-    }
-    std::array<std::string, 7> style_sheet_paths_ =  {
-        "resources//styles//ui_styles.qss", // 0
-         "resources//styles//styles_tabel_widget.qss", // 1
-         "resources//styles//window_dark.qss", // 2
-         "resources//styles//window_branco.qss", // 3
-         "resources//styles//button_default.qss", // 4
-         "resources//styles//button_save.qss",  // 5
-         "resources//styles//PreferencesWindowStyles.qss" // 6
-     };
-
-    for (auto & path : style_sheet_paths_) {
-        if (path.find(name) != std::string::npos) {
-            if (windows_) {
-                std::ranges::replace(path,'//','\\');
-                return path;
-            }
-            if (linux_) {
-                std::ranges::replace(path,'\\','//');
-                return path;
-            }
+QString gets (std::string name ) {
+    QString styleSheet;
+    for (auto & i : style_sheet_paths) {
+        if (i.string().find(name) != std::string::npos) {
+            QFile f(i);
+            f.open(QFile::ReadOnly);
+            styleSheet = f.readAll();
         }
     }
-    return "";
+    return styleSheet;
 }
 
 void Style_Table::Style::setRowResult(QTableWidget *table, int row, int status) {
@@ -101,27 +64,12 @@ void ui_controller::applyTheme() {
         applyDarkTheme(GLOBAL::WINDOW::UI,GLOBAL::WINDOW::_ui_option);
     }
 }
-
-QByteArray findw (QString name) {
-    for (auto & i : style_sheet_paths ) {
-
-        if (QString(QUrl(QString::fromStdString(i.string())).fileName()).contains(name) == true) {
-            QFile file(i);
-             if (file.open(QFile::ReadOnly)){}
-            return file.readAll();
-        }
-    }
-    return "";
-}
-
 void ui_controller::applyLightTheme(Ui_MainWindow *ui,PreferencesWindow *op) {
-    bool get = op != nullptr;
-    qDebug () << gets("button_default.qss");
     if (ui != nullptr && op != nullptr) {
-           op->setStyleSheet(findw(QString::fromStdString(gets("PreferencesWindowStyles.qss"))));
-           op->ui()->btn_salvar->setStyleSheet(findw(QString::fromStdString(gets("button_save.qss"))));
-           op->ui()->btn_aplicar->setStyleSheet(findw(QString::fromStdString(gets("button_default.qss"))));
-          op->ui()->btn_search_paste->setStyleSheet(findw(QString::fromStdString(gets("button_default.qss"))));
+           op->setStyleSheet(gets("PreferencesWindowStyles.qss"));
+           op->ui()->btn_salvar->setStyleSheet(gets("button_save.qss"));
+           op->ui()->btn_aplicar->setStyleSheet(gets("button_default.qss"));
+          op->ui()->btn_search_paste->setStyleSheet(gets("button_default.qss"));
     }
 }
 void ui_controller::applyTableStyle(Ui_MainWindow *ui) {
