@@ -65,7 +65,7 @@
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="../resources/resources.qrc">:/img/images/puc-goias-logo-png_seeklogo-354026-removebg-preview.png</pixmap>
+          <pixmap resource="../resources/resources.qrc">:/img/images/EduMetrics_logo_sem_fundo.png</pixmap>
          </property>
          <property name="scaledContents">
           <bool>true</bool>
@@ -303,7 +303,7 @@
      <x>0</x>
      <y>0</y>
      <width>1084</width>
-     <height>19</height>
+     <height>33</height>
     </rect>
    </property>
    <property name="font">
