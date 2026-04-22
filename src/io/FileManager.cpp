@@ -27,6 +27,10 @@ FileSystemInfo FileManager::resolveFilePaths(FileType type) {
         if (FileType::CONFIG == type) {
             Cfile.file_ = "/home/" + QDir::home().dirName().toStdString() + "/Documentos/PUCSimulador/config.cfgVx";
         }
+        if (FileType::FILE_IDIOMA == type)  {
+            Cfile.file_idioma = "/home/" + QDir::home().dirName().toStdString() + "/CLionProjects/EduMetrics/resources/i18n/idioma.ivx";
+           qDebug () << Cfile.file_idioma;
+        }
     }
     if (getOperatingSystem() == OS::WINDOWS) {
         if (FileType::DATE == type) {
@@ -79,6 +83,7 @@ void FileManager::initialize() {
     }
     GLOBAL::FILE_PATHS::CONFIG =   std::move(QString::fromStdString(resolveFilePaths(FileType::CONFIG).file_.string()));
     GLOBAL::FILE_PATHS::LANGUAGE = std::move(QString::fromStdString(resolveFilePaths(FileType::FILE_IDIOMA).file_idioma.string()));
+
     if (resolveFilePaths(FileType::CONFIG).exist == false) {
         save(GLOBAL::FILE_PATHS::CONFIG, defaultConfig);
     }

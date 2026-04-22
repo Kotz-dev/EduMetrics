@@ -5,7 +5,8 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_AboutDialog.h" resolved
 
 #include "../../include/windows/aboutdialog.h"
-#include "ui_AboutDialog.h"
+
+#include "ui_aboutdialog.h"
 #include <QDesktopServices>
 #include <QUrl>
 

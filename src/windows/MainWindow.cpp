@@ -7,7 +7,7 @@
 
 #include "windows/MainWindow.h"
 #include <QDebug>
-#include <ui_AboutDialog.h>
+#include <ui_aboutdialog.h>
 #include <windows/aboutdialog.h>
 
 #include "ui_MainWindow.h"

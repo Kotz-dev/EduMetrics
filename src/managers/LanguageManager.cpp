@@ -127,7 +127,7 @@ void LanguageUI::applyLanguage(QString & languageKey) {
             });
 
             GLOBAL::WINDOW::UI->menuFerramentas->setTitle(menu_ferramentas[0]);
-            GLOBAL::WINDOW::UI->actionOpition->setText(menu_ferramentas[1]);;
+            GLOBAL::WINDOW::UI->actionOpition->setText(menu_ferramentas[1]);
 
           if (GLOBAL::WINDOW::ui_PrenferecesWindow != nullptr) {
                GLOBAL::WINDOW::ui_PrenferecesWindow->ui()->label->setText(menu_option[0]);

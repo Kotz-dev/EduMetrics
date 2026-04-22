@@ -8,6 +8,7 @@
 #include  <QString>
 #include  "managers/LanguageManager.h"
 #include  "windows/PreferencesWindow.h"
+#include <io/PatchImagem.h>
 #include <io/FileManager.h>
 #include <QDir>
 
