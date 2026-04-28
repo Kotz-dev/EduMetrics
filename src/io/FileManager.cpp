@@ -8,8 +8,27 @@
 
 
 
-QString loadStyleSheet (std::string name ) {
+QString loadStyleSheet (std::string name,PATCH_TYPE_ type) {
     QString styleSheet;
+
+    std::string Path = "";
+    if (type == FILE_styles) {
+        Path = "resources/styles/";
+    }
+    if (type == FILE_IMAGE) {
+        Path = "resources/images/";
+        return QString::fromStdString(std::filesystem::current_path().remove_filename() / Path / name);
+    }
+    if (type == FILE_IDIOMA_) {
+        Path = "resources/i18n/";
+    }
+
+    std::filesystem::path get = std::filesystem::current_path().remove_filename() / Path;
+    std::vector<std::filesystem::path> style_sheet_paths;
+    for (auto & i : std::filesystem::recursive_directory_iterator(get)) {
+        style_sheet_paths.push_back(i.path());
+    }
+
     for (auto & i : style_sheet_paths) {
         if (i.string().find(name) != std::string::npos) {
             QFile f(i);
@@ -19,23 +38,6 @@ QString loadStyleSheet (std::string name ) {
     }
     return styleSheet;
 }
-cnd FileManager::getResourcePath(std::string name,PATCH_TYPE_ type) {
-
-    std::string Path = "";
-    if (type == FILE_styles) {
-        Path = "resources/styles/";
-    }
-    if (type == FILE_IMAGE) {
-        Path = "resources/images/";
-    }
-    if (type == FILE_IDIOMA_) {
-        Path = "resources/i18n/";
-    }
-    std::filesystem::path get = std::filesystem::current_path().remove_filename() / Path / name;
-    return cnd{get,QString::fromStdString(get)};
-}
-
-
 
 enum OS {
     LINUX = 1,

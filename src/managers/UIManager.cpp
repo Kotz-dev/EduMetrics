@@ -21,9 +21,8 @@ void Style_Table::Style::setRowResult(QTableWidget *table, int row, int status) 
          }
 
          if (status == 1) {
-             auto get =  FileManager::getResourcePath("table_aprovado.png",PATCH_TYPE_::FILE_IMAGE).To_String_;
-             table->setIconSize(QSize(table->rowHeight(row),table->columnWidth(7)));
-             table->item(row, 7)->setIcon(QPixmap(get).scaled(table->rowHeight(row),table->columnWidth(7),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+             // table->setIconSize(QSize(table->rowHeight(row),table->columnWidth(7)));
+             // table->item(row, 7)->setIcon(QPixmap(get).scaled(table->rowHeight(row),table->columnWidth(7),Qt::KeepAspectRatio,Qt::SmoothTransformation));
          }
 
          if (status == 2) {
@@ -59,18 +58,18 @@ void ui_styles_::applyTheme() {
 }
 void ui_styles_::applyLightTheme(MainWindow *ui,PreferencesWindow *op) {
     if (ui != nullptr ) {
-        ui->setStyleSheet(loadStyleSheet("window_white.qss"));
+        ui->setStyleSheet(loadStyleSheet("window_white.qss",PATCH_TYPE_::FILE_styles));
     }
     if (op != nullptr) {
-         op->setStyleSheet(loadStyleSheet("PreferencesWindowStyles_white.qss"));
+         op->setStyleSheet(loadStyleSheet("PreferencesWindowStyles_white.qss",PATCH_TYPE_::FILE_styles));
     }
 }
 void ui_styles_::applyDarkTheme(MainWindow *ui,PreferencesWindow *Prefe) {
     if (ui != nullptr ) {
-        ui->setStyleSheet(loadStyleSheet("window_dark.qss"));
+        ui->setStyleSheet(loadStyleSheet("window_dark.qss",PATCH_TYPE_::FILE_styles));
     }
     if (Prefe != nullptr) {
-        Prefe->setStyleSheet(loadStyleSheet("PreferencesWindowStyles_dark.qss"));
+        Prefe->setStyleSheet(loadStyleSheet("PreferencesWindowStyles_dark.qss",PATCH_TYPE_::FILE_styles));
     }
 }
 void UI_FONT::text(QString fonte, frw obj) {

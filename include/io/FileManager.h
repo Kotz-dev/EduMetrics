@@ -54,7 +54,7 @@ struct FileSystemInfo {
     std::filesystem::path file_idioma;
     bool exist;
 };
-QString loadStyleSheet (std::string name );
+QString loadStyleSheet (std::string name,PATCH_TYPE_ Type);
 
 inline int getOperatingSystem () {
 #ifdef __linux__
@@ -97,15 +97,6 @@ public :
     static bool Load( QString filePath, Json &jsonOutput);
     static bool Load( QString filePath, nlohmann::json &jsonOutput, bool &isOpen);
     static bool save( QString filePath, std::variant<item_vector_array, ApplicationConfig> dataObject);
-    static cnd getResourcePath (std::string name,PATCH_TYPE_ type);
     FileManager();
 };
-const std::array<std::filesystem::path, 8> style_sheet_paths =
-{
-    FileManager::getResourcePath("window_dark.qss",FILE_styles).ToFileSystemPath,
-    FileManager::getResourcePath("window_white.qss",FILE_styles).ToFileSystemPath,
-    FileManager::getResourcePath("PreferencesWindowStyles_white.qss",FILE_styles).ToFileSystemPath,
-    FileManager::getResourcePath("PreferencesWindowStyles_dark.qss",FILE_styles).ToFileSystemPath,
-    FileManager::getResourcePath("system_evaluation_dark.qss",FILE_styles).ToFileSystemPath,
-  };
 #endif //FILEMANGER_H

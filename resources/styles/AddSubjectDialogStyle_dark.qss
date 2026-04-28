@@ -1,0 +1,27 @@
+QFrame#frame {
+ background-color: black;
+}
+
+#btn_save {
+    background-color:  rgb(0, 100, 190);
+    border-radius: 1px;
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 6px 16px;
+    font-weight: bold;
+    font-size: 13px;
+}
+#btn_save:hover {
+    background-color: #004684;
+}
+#btn_save:pressed {
+    background-color: #003878;
+}
+
+
+#btn_cancel {
+  background-color: #303030;
+  border-radius: 1px;
+  border: 2px solid #5B5B5B;
+  padding: 6px 16px;
+}

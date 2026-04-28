@@ -59,6 +59,7 @@ add_executable(EduMetrics
         ${CMAKE_SOURCE_DIR}/forms/aboutdialog.ui
         ${CMAKE_SOURCE_DIR}/resources/resources.qrc
         ${CMAKE_SOURCE_DIR}/forms/system_evaluation.ui
+        ${CMAKE_SOURCE_DIR}/forms/AddSubjectDialog.ui
 
         # Entry point
         src/main.cpp
@@ -89,6 +90,8 @@ add_executable(EduMetrics
         include/windows/PreferencesWindow.h
         src/windows/system_evaluation.cpp
         include/windows/system_evaluation.h
+        include/windows/AddSubjectDialog.h
+        src/windows/AddSubjectDialog.cpp
 
         # Utils
         src/utils/GlobalAccess.cpp
@@ -96,6 +99,7 @@ add_executable(EduMetrics
         src/windows/aboutdialog.cpp
         include/windows/aboutdialog.h
         forms/aboutdialog.ui
+        forms/AddSubjectDialog.ui
         src/data/item_system_evaluation.cpp
         include/data/item_system_evaluation.h
 )

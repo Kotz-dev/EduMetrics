@@ -15,6 +15,10 @@
 
 #include <windows/system_evaluation.h>
 
+#include <windows/aboutdialog.h>
+
+#include "AddSubjectDialog.h"
+
 #define version "v0.0.1"
 
 static bool isGradeOutOfRange(double n1,double n2) {
@@ -290,6 +294,16 @@ MainWindow::~MainWindow() {
  * com QTableWidgetItems vazios
  */
 void MainWindow::on_btn_add_clicked() {
+
+    std::unique_ptr<addsubjectdialog> janela = std::make_unique<addsubjectdialog>(this);
+    janela->setWindowModality(Qt::WindowModal);
+    janela->setWindowFlags(Qt::Window| Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+   auto get =  janela->exec();
+
+    if (get == QDialog::Rejected) {
+        return;
+    }
+
 
     if (ui->tableWidget->rowCount() >= 12) {
         return;

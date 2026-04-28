@@ -26,7 +26,7 @@ QString indexImage(UNIVERSIDADE Un) {
          "Logo_UNIV.png",
          "Logo_personalizado.png"
          };
-    return FileManager::getResourcePath(list[Un].string(),FILE_IMAGE).To_String_;
+    return loadStyleSheet(list[Un].string(),FILE_IMAGE);
 }
 
 
@@ -60,7 +60,7 @@ evaluation_system::evaluation_system(QWidget *parent) :
     QDialog(parent), ui(new Ui::evaluation_system) {
     ui->setupUi(this);
     init(ui);
-    setStyleSheet(loadStyleSheet("system_evaluation_dark.qss"));
+    setStyleSheet(loadStyleSheet("system_evaluation_dark.qss",PATCH_TYPE_::FILE_styles));
 }
 
 evaluation_system::~evaluation_system() {
