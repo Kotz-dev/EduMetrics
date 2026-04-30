@@ -17,6 +17,12 @@ background-color: transparent;
 border-radius : 0px;
 }
 
+QLineEdit#line_txt_disciplina {
+   background-color : #0d0d0d;
+    border-radius : 1px;
+      border: 1px solid #666666;
+}
+
 QPushButton{
   background-color : #0d0d0d;
   border-radius : 0px;

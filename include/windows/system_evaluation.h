@@ -12,7 +12,8 @@
 enum UNIVERSIDADE {
     PUC = 0,
     UNIVERSO = 1,
-    PERSONALIZADO = 2
+    UFG = 2,
+    PERSONALIZADO = 3
 };
 
 QString indexImage(UNIVERSIDADE Un);

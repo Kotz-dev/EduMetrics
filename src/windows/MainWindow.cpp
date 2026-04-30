@@ -19,7 +19,7 @@
 
 #include "AddSubjectDialog.h"
 
-#define version "v0.0.1"
+#define version "v0.0.4"
 
 static bool isGradeOutOfRange(double n1,double n2) {
     if (n1 > 10.0 || n2 > 10.0) {
@@ -295,14 +295,14 @@ MainWindow::~MainWindow() {
  */
 void MainWindow::on_btn_add_clicked() {
 
-    std::unique_ptr<addsubjectdialog> janela = std::make_unique<addsubjectdialog>(this);
-    janela->setWindowModality(Qt::WindowModal);
-    janela->setWindowFlags(Qt::Window| Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
-   auto get =  janela->exec();
-
-    if (get == QDialog::Rejected) {
-        return;
-    }
+   //  std::unique_ptr<addsubjectdialog> janela = std::make_unique<addsubjectdialog>(this);
+   //  janela->setWindowModality(Qt::WindowModal);
+   //  janela->setWindowFlags(Qt::Window| Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+   // auto get =  janela->exec();
+   //
+   //  if (get == QDialog::Rejected) {
+   //      return;
+   //  }
 
 
     if (ui->tableWidget->rowCount() >= 12) {
@@ -329,6 +329,8 @@ void MainWindow::on_btn_add_clicked() {
     ui->tableWidget->item(0,6)->setFlags(Qt::ItemIsEnabled);
     ui->tableWidget->item(0,7)->setFlags(Qt::ItemIsEnabled);
     ui->tableWidget->item(0,8)->setFlags(Qt::ItemIsEnabled);
+
+    ui->label_total_mat->setText(QString::number(ui->tableWidget->rowCount()) + " disciplinas");
 }
 
 /**
@@ -356,6 +358,8 @@ void MainWindow::on_btn_remover_clicked()
      for (auto i : listitem) {
         ui->tableWidget->removeRow(i);
      }
+
+    ui->label_total_mat->setText(QString::number(ui->tableWidget->rowCount()) +" disciplinas");
 }
 
 void MainWindow::on_actionSobre_triggered() {

@@ -18,12 +18,7 @@ addsubjectdialog::addsubjectdialog(QWidget *parent) :
 
     setStyleSheet(loadStyleSheet("AddSubjectDialogStyle_dark.qss",PATCH_TYPE_::FILE_styles));
 }
-
-void addsubjectdialog::on_btn_btn_2_avaliacoes_clicked() {
-
-}
-
-void addsubjectdialog::on_btn_btn_3_avaliacoes_clicked() {
+void addsubjectdialog::on_btn_3_avaliacoes_clicked() {
 
 }
 void addsubjectdialog::on_btn_regular_clicked() {

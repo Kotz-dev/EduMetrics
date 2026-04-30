@@ -18,7 +18,7 @@ QString converter (std::filesystem::path path) {
 }
 
 QString indexImage(UNIVERSIDADE Un) {
-     std::vector<std::filesystem::path> list = {"Logo_PUC.png","Logo_UNIV.png","Logo_personalizado.png"};
+     std::vector<std::filesystem::path> list = {"Logo_PUC.png","Logo_UNIV.png","Logo_UFG","Logo_personalizado.png"};
     return loadStyleSheet(list[Un].string(),FILE_IMAGE);
 }
 void evaluation_system::on_list_faculdade_currentRowChanged(int currentRow) {
@@ -34,9 +34,10 @@ void evaluation_system::init() {
     std::vector<ITEM> item_vector =
     {
         ITEM{indexImage(PUC),"PUC",
-            "PUC (Pontifícia Universidade Católica)",75},
-        ITEM{indexImage(UNIVERSO),"UNIVERSO","UNIVERSO",75},
-        ITEM{indexImage(PERSONALIZADO),"Personlizado","Perzolizado",75},
+            "PUC (Pontifícia Universidade Católica)",15},
+        ITEM{indexImage(UNIVERSO),"UNIVERSO","UNIVERSO",20},
+        ITEM{indexImage(UFG),"UFG","Universidade Federal de Goiás",30},
+        ITEM{indexImage(PERSONALIZADO),"Personlizado","Personlizado",30},
      };
 
     if (ui != nullptr) {

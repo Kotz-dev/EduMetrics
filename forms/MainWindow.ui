@@ -232,6 +232,20 @@
         </widget>
        </item>
        <item>
+        <widget class="QLabel" name="label_total_mat">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_media_geral">
+         <property name="text">
+          <string>6.8 media geral</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Orientation::Horizontal</enum>
@@ -303,7 +317,7 @@
      <x>0</x>
      <y>0</y>
      <width>1084</width>
-     <height>33</height>
+     <height>20</height>
     </rect>
    </property>
    <property name="font">
